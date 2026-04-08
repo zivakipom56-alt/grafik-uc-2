@@ -1,3 +1,6 @@
+Готово. Объединил три блока в один общий контейнер и сделал внутри аккуратную сетку, как на твоём фото. Вот полный файл:
+
+```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -133,11 +136,20 @@
       padding:20px;
     }
 
-    .header {
+    .header-panel {
+      padding:16px;
+      margin-bottom:16px;
+    }
+
+    .header-grid {
       display:grid;
       grid-template-columns: 1.2fr 260px 320px;
       gap:16px;
-      margin-bottom:16px;
+    }
+
+    .header-panel .panel {
+      box-shadow:none;
+      border-radius:18px;
     }
 
     .panel {
@@ -148,7 +160,9 @@
     }
 
     .hero {
-      padding:24px;
+      padding:20px;
+      background:#f7f9fb;
+      border:1px solid #e0e7ef;
     }
 
     .hero-top {
@@ -223,10 +237,10 @@
     }
 
     .now {
-      padding:20px;
+      padding:18px;
       background:linear-gradient(180deg,#2d516d 0%, #22465f 100%);
       color:#fff;
-      border-color:rgba(255,255,255,0.08);
+      border:1px solid rgba(255,255,255,0.12);
     }
 
     .now-label {
@@ -271,7 +285,7 @@
     .calendar {
       padding:18px;
       background:linear-gradient(180deg,#f7f9fc 0%, #eef2f6 100%);
-      border-color:#e1e7ef;
+      border:1px solid #e1e7ef;
     }
 
     .calendar-head {
@@ -732,16 +746,16 @@
     }
 
     @media (max-width:1200px) {
-      .header {
+      .header-grid {
         grid-template-columns:1fr 320px;
       }
-      .now {
+      .header-grid .now {
         grid-column:1 / -1;
       }
     }
 
     @media (max-width:900px) {
-      .header {
+      .header-grid {
         grid-template-columns:1fr;
       }
     }
@@ -771,8 +785,9 @@
   <div id="app" class="hidden">
     <div class="container">
 
-      <div class="header">
-        <div class="panel hero">
+      <div class="panel header-panel">
+        <div class="header-grid">
+          <div class="panel hero">
           <div class="hero-top">
             <div>
               <h1>Графики</h1>
@@ -784,13 +799,13 @@
           </div>
           <div id="dateInfo" class="hero-date-info"></div>
         </div>
-        <div class="panel now">
+          <div class="panel now">
           <div class="now-label">Сейчас</div>
           <div id="nowDate" class="now-date">—</div>
           <div id="nowTime" class="now-time">--:--</div>
           <div id="nowMeta" class="now-meta"></div>
         </div>
-        <div class="panel calendar">
+          <div class="panel calendar">
           <div class="calendar-head">
             <div id="calendarTitle" class="calendar-title">Календарь</div>
             <div class="calendar-nav">
@@ -805,10 +820,12 @@
             <div class="legend-item"><span class="legend-dot" style="background:var(--conflict-text)"></span><span>Замена</span></div>
             <div class="legend-item"><span class="legend-dot" style="background:var(--holiday-text)"></span><span>Праздник</span></div>
           </div>
+          </div>
         </div>
       </div>
 
       <div id="todaySummary" class="panel today-summary"></div>
+
 
       <div class="toolbar">
         <div class="tabs">
@@ -1183,7 +1200,7 @@
             <div class="summary-title">Сегодня</div>
             <div class="summary-sub">${todayText}</div>
           </div>
-          <button class="summary-btn" type="button" onclick="goToToday()">Показать сегодня</button>
+          <button class="summary-btn" type="button" onclick="goToToday()">Сводка сегодня</button>
         </div>
         <div class="summary-grid">
           <div class="summary-card">
@@ -1408,6 +1425,7 @@
       const year = now.getFullYear();
       const hh = String(now.getHours()).padStart(2, "0");
       const mm = String(now.getMinutes()).padStart(2, "0");
+      const ss = String(now.getSeconds()).padStart(2, "0");
 
       nowDateEl.textContent = `${day} ${month} ${year} г.`;
       nowTimeEl.textContent = `${hh}:${mm}`;
@@ -1435,7 +1453,9 @@
     function renderStats() {
       const el = document.getElementById("statsGrid");
       if (!el) return;
+
       const stats = computeStats();
+
       el.innerHTML = `
         <div class="panel stat">
           <div class="stat-label">Вахта</div>
