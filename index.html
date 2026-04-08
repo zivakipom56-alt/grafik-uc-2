@@ -1,11 +1,3 @@
-Ниже твоя **последняя рабочая версия**, в которую я просто **добавил логотипы** (экран входа + шапка). Логотипы берутся из файлов рядом с HTML:
-
-- `sibur-logo.png` — для экрана входа  
-- `sibur-intech.png` — для шапки  
-
-Если файлов нет, срабатывает текстовый fallback и страница не ломается.
-
-```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -312,15 +304,6 @@
       letter-spacing:1px;
     }
 
-    .now-time-wrap {
-  display:inline-block;
-  padding:10px 14px;
-  border-radius:16px;
-  background:linear-gradient(180deg,#f2fbfa 0%, #e8f5f4 100%);
-  border:1px solid #cfe4e2;
-  box-shadow:0 10px 18px rgba(15,23,42,0.06);
-  margin-bottom:10px;
-}   
     .now-meta {
       margin-top:14px;
       display:flex;
@@ -859,7 +842,7 @@
           <div class="panel now">
             <div class="now-label">Сейчас</div>
             <div id="nowDate" class="now-date">—</div>
-            <div class="now-time-wrap"><div id="nowTime" class="now-time">--:--</div></div>
+            <div id="nowTime" class="now-time">--:--</div>
             <div id="nowMeta" class="now-meta"></div>
           </div>
 
@@ -1882,6 +1865,3 @@
   </script>
 </body>
 </html>
-```
-
-Если нужно, добавлю логотипы прямыми URL (если ты дашь ссылку на картинки в облаке).
