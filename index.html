@@ -909,6 +909,7 @@
 
   <script>
     const PASSWORD = "2305";
+    const CORS_PROXY = "https://api.allorigins.win/raw?url=";
 
     const CSV = {
       watch: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_j9JH9OK3SyTfOF0dtATg3M-eBFtfW5Cv3jorD1fTU6VcIQTAPhlkExjG6bUAnT2tNAzMmtO1PRci/pub?gid=1954389003&single=true&output=csv",
@@ -1471,7 +1472,8 @@
         html += `
           <div class="panel card">
             <div class="error-box">
-              Не удалось загрузить: ${state.loadErrors.map(escapeHtml).join(" · ")}
+              Не удалось загрузить: ${state.loadErrors.map(escapeHtml).join(" · ")}. 
+              Проверь, что ссылки открываются в режиме инкогнито.
             </div>
           </div>
         `;
@@ -1676,15 +1678,36 @@
       renderNowCard();
     }
 
-    function loadCsv(name, url) {
-      if (!url) return Promise.resolve({ name, ok:false, text:"", error:"нет ссылки" });
-      return fetch(url, { cache: "no-store" })
-        .then(r => {
-          if (!r.ok) throw new Error(`HTTP ${r.status}`);
-          return r.text();
-        })
-        .then(text => ({ name, ok:true, text }))
-        .catch(err => ({ name, ok:false, text:"", error: err?.message || "ошибка загрузки" }));
+    function looksLikeHtml(text) {
+      return /<!doctype html|<html/i.test(text || "");
+    }
+
+    async function fetchText(url) {
+      const r = await fetch(url, { cache: "no-store" });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const text = await r.text();
+      return { text };
+    }
+
+    async function loadCsv(name, url) {
+      if (!url) return { name, ok:false, text:"", error:"нет ссылки" };
+      try {
+        const res = await fetchText(url);
+        if (looksLikeHtml(res.text)) throw new Error("html вместо csv");
+        return { name, ok:true, text: res.text };
+      } catch (err) {
+        if (CORS_PROXY) {
+          try {
+            const proxyUrl = CORS_PROXY + encodeURIComponent(url);
+            const res2 = await fetchText(proxyUrl);
+            if (looksLikeHtml(res2.text)) throw new Error("html вместо csv");
+            return { name, ok:true, text: res2.text };
+          } catch (err2) {
+            return { name, ok:false, text:"", error: err2?.message || "ошибка загрузки" };
+          }
+        }
+        return { name, ok:false, text:"", error: err?.message || "ошибка загрузки" };
+      }
     }
 
     async function load() {
