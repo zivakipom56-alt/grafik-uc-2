@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -1564,4 +1563,1693 @@
   </script>
 </body>
 </html>
-```
+
+ты сделал строки узкие?
+
+Да, сделал строки заметно уже. Конкретно уменьшил:
+
+padding у .row и .row.conflict
+размер аватара
+размеры текста (.main-line, .meta)
+отступы и размер бейджей (.badges, .badge)
+Если хочешь еще плотнее — скажи, на сколько процентов или примерную высоту строки.
+
+
+Приложение пользователя
+1) слушай можешь сделать подсветку также кто сегодня
+2) Добавить помимо всех блоков Визиты (если блок включим то надо скрипт менять, для него ттольок ручной ввод оставляем) 
+и код скинь сюда
+
+Фоновый терминал завершен с python3 - <<'PY' from pathlib import Path path = Path('/Users/albert/Documents/New project/index.html') text = path.read_text(encoding='utf-8') # Insert new CSS variables for today row/badge maybe after today-bg if '--today-bg' in text and '--today-border' in text: text = text.replace(' --today-bg:#e8f1ff;\n --today-border:#9dbcf0;\n', ' --today-bg:#e8f1ff;\n --today-border:#9dbcf0;\n\n --today-row-bg:#eef5ff;\n --today-row-border:#b7cff6;\n') # Add badge.today style if not present if '.badge.today' not in text: text = text.replace(' .badge.warn {\n background:var(--warn-bg);\n color:var(--warn-text);\n }\n', ' .badge.warn {\n background:var(--warn-bg);\n color:var(--warn-text);\n }\n\n .badge.today {\n background:var(--brand-soft);\n color:var(--brand);\n border-color:#cfe2f0;\n }\n') # Add row.today style if '.row.today' not in text: text = text.replace(' .row.conflict {\n margin:6px 0;\n padding:10px 12px;\n border:1px solid var(--conflict-border);\n border-radius:14px;\n background:var(--conflict-bg);\n }\n', ' .row.conflict {\n margin:6px 0;\n padding:10px 12px;\n border:1px solid var(--conflict-border);\n border-radius:14px;\n background:var(--conflict-bg);\n }\n\n .row.today {\n background:var(--today-row-bg);\n border:1px solid var(--today-row-border);\n border-radius:14px;\n padding:10px 12px;\n margin:6px 0;\n }\n') # Add CSV.visits and state data if 'holidays:' in text and 'visits:' not in text: text = text.replace(' holidays: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_j9JH9OK3SyTfOF0dtATg3M-eBFtfW5Cv3jorD1fTU6VcIQTAPhlkExjG6bUAnT2tNAzMmtO1PRci/pub?gid=72554172&single=true&output=csv"\n', ' holidays: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_j9JH9OK3SyTfOF0dtATg3M-eBFtfW5Cv3jorD1fTU6VcIQTAPhlkExjG6bUAnT2tNAzMmtO1PRci/pub?gid=72554172&single=true&output=csv",\n visits: ""\n') # Add visits to state data and monthFilter if 'vacation: []' in text and 'visits:' not in text: text = text.replace(' vacation: [],\n holidays: []\n', ' vacation: [],\n holidays: [],\n visits: []\n') if 'monthFilter' in text and 'visits' not in text.split('monthFilter',1)[1].split('data',1)[0]: text = text.replace(' monthFilter: {\n watch: "all",\n tours: "all"\n },\n', ' monthFilter: {\n watch: "all",\n tours: "all",\n visits: "all"\n },\n') # Add tab for visits if "setView('vacation'" in text and "setView('visits'" not in text: text = text.replace(' <div class="tab" onclick="setView(\'vacation\', this)">Отпуска</div>\n', ' <div class="tab" onclick="setView(\'vacation\', this)">Отпуска</div>\n <div class="tab" onclick="setView(\'visits\', this)">Визиты</div>\n') # Add helper functions for today if 'function isSelectedDateMatch' in text and 'function isTodayDate' not in text: insert = '''\n function isTodayDate(textDate) {\n const d = parseDate(textDate);\n if (!d) return false;\n return dateKey(d) === dateKey(new Date());\n }\n\n function isTodayInPeriod(periodText) {\n const period = parsePeriod(periodText);\n if (!period || !period.start || !period.end) return false;\n const today = startOfDay(new Date()).getTime();\n return today >= startOfDay(period.start).getTime() && today <= startOfDay(period.end).getTime();\n }\n''' text = text.replace(' function isSelectedDateMatch(textDate) {\n if (!state.selectedDate) return true;\n const d = parseDate(textDate);\n if (!d) return false;\n return dateKey(d) === state.selectedDate;\n }\n', ' function isSelectedDateMatch(textDate) {\n if (!state.selectedDate) return true;\n const d = parseDate(textDate);\n if (!d) return false;\n return dateKey(d) === state.selectedDate;\n }\n' + insert) # Modify renderRow to accept today flag if 'function renderRow({ avatarText, main, meta, badges = [], conflict = false })' in text: text = text.replace(' function renderRow({ avatarText, main, meta, badges = [], conflict = false }) {\n return `\n <div class="row ${conflict ? "conflict" : ""}">\n', ' function renderRow({ avatarText, main, meta, badges = [], conflict = false, today = false }) {\n return `\n <div class="row ${conflict ? "conflict" : ""} ${today ? "today" : ""}">\n') # Add badge class mapping for today if 'tag === "ОК" ? "ok"' in text and 'tag === "Сегодня"' not in text: text = text.replace(' tag === "ОК" ? "ok" :\n "warn";\n', ' tag === "ОК" ? "ok" :\n tag === "Сегодня" ? "today" :\n "warn";\n') # Add visits loading with optional CSV if 'async function load()' in text and 'loadCsv' not in text: helper = '''\n function loadCsv(url) {\n if (!url) return Promise.resolve("" );\n return fetch(url).then(r => r.text());\n }\n\n''' text = text.replace(' async function load() {\n', helper + ' async function load() {\n') text = text.replace(' const [w, t, s, v, h] = await Promise.all([\n fetch(CSV.watch).then(r => r.text()),\n fetch(CSV.tours).then(r => r.text()),\n fetch(CSV.schedule).then(r => r.text()),\n fetch(CSV.vacation).then(r => r.text()),\n fetch(CSV.holidays).then(r => r.text())\n ]);\n', ' const [w, t, s, v, h, vi] = await Promise.all([\n loadCsv(CSV.watch),\n loadCsv(CSV.tours),\n loadCsv(CSV.schedule),\n loadCsv(CSV.vacation),\n loadCsv(CSV.holidays),\n loadCsv(CSV.visits)\n ]);\n') text = text.replace(' state.data.vacation = parse(v);\n state.data.holidays = parse(h);\n', ' state.data.vacation = parse(v);\n state.data.holidays = parse(h);\n state.data.visits = parse(vi);\n') # Add visits in render section if 'if (state.view === "all" || state.view === "vacation")' in text and 'visits' not in text.split('vacation',1)[1]: insert = '''\n if (state.view === "all" || state.view === "visits") {\n const visitsRows = state.data.visits.filter(row =>\n matchesSearch([row["дата"], row["фио"], row["комментарий"], row["тема"], row["гость"], row["посетитель"], row["организация"]]) &&\n isSelectedDateMatch(row["дата"])\n );\n\n html += renderSection(\n "Визиты",\n "visits",\n "Ручной ввод посещений и встреч",\n visitsRows,\n row => {\n const date = safe(row["дата"]);\n const person = safe(row["фио"]) || safe(row["гость"]) || safe(row["посетитель"]) || safe(row["организация"]) || safe(row["тема"]) || "";\n const isToday = isTodayDate(date);\n\n const badges = [];\n if (isToday) badges.push("Сегодня");\n\n return renderRow({\n avatarText: person || date,\n main: `${highlight(date)} — ${highlight(person)}`,\n meta: [\n safe(row["комментарий"]),\n safe(row["тема"]) ? `Тема: ${safe(row["тема"])}` : "",\n safe(row["организация"]) ? `Орг.: ${safe(row["организация"])}` : ""\n ].filter(Boolean).map(highlight).join(" · "),\n badges,\n conflict: false,\n today: isToday\n });\n },\n true\n );\n }\n''' text = text.replace(' if (state.view === "all" || state.view === "vacation") {\n html += renderSection(\n "Отпуска",\n "vacation",\n "Годовой список отпускных периодов",\n vacationRows,\n row => renderRow({\n avatarText: safe(row["фио"]),\n main: `${highlight(row["фио"])}`,\n meta: [`${highlight(row["начало"])} → ${highlight(row["конец"])}`],\n badges: ["Отпуск"],\n conflict: false\n })\n );\n }\n', ' if (state.view === "all" || state.view === "vacation") {\n html += renderSection(\n "Отпуска",\n "vacation",\n "Годовой список отпускных периодов",\n vacationRows,\n row => {\n const start = parseDate(row["начало"]);\n const end = parseDate(row["конец"]);\n const isToday = start && end ? (startOfDay(new Date()).getTime() >= startOfDay(start).getTime() && startOfDay(new Date()).getTime() <= startOfDay(end).getTime()) : false;\n const badges = ["Отпуск"];\n if (isToday) badges.push("Сегодня");\n\n return renderRow({\n avatarText: safe(row["фио"]),\n main: `${highlight(row["фио"])}`,\n meta: [`${highlight(row["начало"])} → ${highlight(row["конец"])}`],\n badges,\n conflict: false,\n today: isToday\n });\n }\n );\n }\n' + insert) # Add today badge and row highlight in watch/tours/schedule # We'll insert in existing render logic by replacing blocks with added isToday and badge if 'if (state.view === "all" || state.view === "watch")' in text: text = text.replace(' const conflict = !!safe(row["замена"]) || status.toLowerCase().includes("замена") || status.toLowerCase().includes("отпуск");\n const dateObj = parseDate(date);\n const holiday = dateObj ? holidayMap[dateKey(dateObj)] : "";\n\n const badges = [];\n if (status) badges.push(status === "ОК" ? "ОК" : "Замена");\n if (conflict) badges.push("Конфликт");\n if (holiday) badges.push("Праздник");\n\n return renderRow({\n avatarText: finalPerson(row),\n main: `${highlight(date)} — ${highlight(finalPerson(row))}`,\n meta: [\n safe(row["день"]),\n safe(row["замена"]) ? `Замена: ${safe(row["замена"])}` : "",\n safe(row["комментарий"])\n ].filter(Boolean).map(highlight).join(" · "),\n badges,\n conflict\n });\n', ' const conflict = !!safe(row["замена"]) || status.toLowerCase().includes("замена") || status.toLowerCase().includes("отпуск");\n const dateObj = parseDate(date);\n const holiday = dateObj ? holidayMap[dateKey(dateObj)] : "";\n const isToday = isTodayDate(date);\n\n const badges = [];\n if (status) badges.push(status === "ОК" ? "ОК" : "Замена");\n if (conflict) badges.push("Конфликт");\n if (holiday) badges.push("Праздник");\n if (isToday) badges.push("Сегодня");\n\n return renderRow({\n avatarText: finalPerson(row),\n main: `${highlight(date)} — ${highlight(finalPerson(row))}`,\n meta: [\n safe(row["день"]),\n safe(row["замена"]) ? `Замена: ${safe(row["замена"])}` : "",\n safe(row["комментарий"])\n ].filter(Boolean).map(highlight).join(" · "),\n badges,\n conflict,\n today: isToday\n });\n') if 'if (state.view === "all" || state.view === "tours")' in text: text = text.replace(' const conflict = !!safe(row["замена"]) || status.toLowerCase().includes("замена") || status.toLowerCase().includes("отпуск");\n const dateObj = parseDate(date);\n const holiday = dateObj ? holidayMap[dateKey(dateObj)] : "";\n\n const badges = [];\n if (status) badges.push(status === "ОК" ? "ОК" : "Замена");\n if (conflict) badges.push("Конфликт");\n if (holiday) badges.push("Праздник");\n\n return renderRow({\n avatarText: finalPerson(row),\n main: `${highlight(date)} — ${highlight(finalPerson(row))}`,\n meta: [\n safe(row["день"]),\n safe(row["замена"]) ? `Замена: ${safe(row["замена"])}` : "",\n safe(row["комментарий"])\n ].filter(Boolean).map(highlight).join(" · "),\n badges,\n conflict\n });\n', ' const conflict = !!safe(row["замена"]) || status.toLowerCase().includes("замена") || status.toLowerCase().includes("отпуск");\n const dateObj = parseDate(date);\n const holiday = dateObj ? holidayMap[dateKey(dateObj)] : "";\n const isToday = isTodayDate(date);\n\n const badges = [];\n if (status) badges.push(status === "ОК" ? "ОК" : "Замена");\n if (conflict) badges.push("Конфликт");\n if (holiday) badges.push("Праздник");\n if (isToday) badges.push("Сегодня");\n\n return renderRow({\n avatarText: finalPerson(row),\n main: `${highlight(date)} — ${highlight(finalPerson(row))}`,\n meta: [\n safe(row["день"]),\n safe(row["замена"]) ? `Замена: ${safe(row["замена"])}` : "",\n safe(row["комментарий"])\n ].filter(Boolean).map(highlight).join(" · "),\n badges,\n conflict,\n today: isToday\n });\n') if 'if (state.view === "all" || state.view === "schedule")' in text: text = text.replace(' const conflict = !!safe(row["замена"]) || status.toLowerCase().includes("замена") || status.toLowerCase().includes("отпуск");\n\n const badges = [];\n if (status) badges.push(status === "ОК" ? "ОК" : "Замена");\n if (conflict) badges.push("Конфликт");\n\n return renderRow({\n avatarText: finalPerson(row),\n main: `Неделя ${highlight(row["неделя"])} — ${highlight(finalPerson(row))}`,\n meta: [\n safe(row["период"]),\n safe(row["замена"]) ? `Замена: ${safe(row["замена"])}` : "",\n safe(row["комментарий"])\n ].filter(Boolean).map(highlight).join(" · "),\n badges,\n conflict\n });\n', ' const conflict = !!safe(row["замена"]) || status.toLowerCase().includes("замена") || status.toLowerCase().includes("отпуск");\n const isToday = isTodayInPeriod(row["период"]);\n\n const badges = [];\n if (status) badges.push(status === "ОК" ? "ОК" : "Замена");\n if (conflict) badges.push("Конфликт");\n if (isToday) badges.push("Сегодня");\n\n return renderRow({\n avatarText: finalPerson(row),\n main: `Неделя ${highlight(row["неделя"])} — ${highlight(finalPerson(row))}`,\n meta: [\n safe(row["период"]),\n safe(row["замена"]) ? `Замена: ${safe(row["замена"])}` : "",\n safe(row["комментарий"])\n ].filter(Boolean).map(highlight).join(" · "),\n badges,\n conflict,\n today: isToday\n });\n') path.write_text(text, encoding='utf-8') print('Updated') PY
+
+
+Изучено 1 файл,2 поисков
+Фоновый терминал завершен с python3 - <<'PY' from pathlib import Path path = Path('/Users/albert/Documents/New project/index.html') text = path.read_text(encoding='utf-8') # Add visits in state.data text = text.replace(' vacation: [],\n holidays: []\n', ' vacation: [],\n holidays: [],\n visits: []\n') # Add visits in collapsed text = text.replace(' collapsed: {\n watch: false,\n tours: false,\n schedule: false,\n vacation: false\n },\n', ' collapsed: {\n watch: false,\n tours: false,\n schedule: false,\n vacation: false,\n visits: false\n },\n') # Insert visits render section before empty check if 'if (state.view === "all" || state.view === "vacation")' in text and '"Визиты"' not in text: insert = '''\n if (state.view === "all" || state.view === "visits") {\n const visitsRows = state.data.visits.filter(row =>\n matchesSearch([row["дата"], row["фио"], row["комментарий"], row["тема"], row["гость"], row["посетитель"], row["организация"]]) &&\n isSelectedDateMatch(row["дата"])\n );\n\n html += renderSection(\n "Визиты",\n "visits",\n "Ручной ввод посещений и встреч",\n visitsRows,\n row => {\n const date = safe(row["дата"]);\n const person = safe(row["фио"]) || safe(row["гость"]) || safe(row["посетитель"]) || safe(row["организация"]) || safe(row["тема"]) || "";\n const isToday = isTodayDate(date);\n\n const badges = [];\n if (isToday) badges.push("Сегодня");\n\n return renderRow({\n avatarText: person || date,\n main: `${highlight(date)} — ${highlight(person)}`,\n meta: [\n safe(row["комментарий"]),\n safe(row["тема"]) ? `Тема: ${safe(row["тема"])}` : "",\n safe(row["организация"]) ? `Орг.: ${safe(row["организация"])}` : ""\n ].filter(Boolean).map(highlight).join(" · "),\n badges,\n conflict: false,\n today: isToday\n });\n },\n true\n );\n }\n''' marker = ' if (!html) {' text = text.replace(marker, insert + marker) path.write_text(text, encoding='utf-8') print('Patched') PY
+
+
+Изучено 1 файл
+Работал на протяжении 2m 38s
+Сделал:
+
+подсветку “Сегодня” для Вахты/Экскурсий/Расписания/Визитов (строка и бейдж),
+добавил блок “Визиты” (ручной ввод),
+загрузка “Визиты” идет из отдельного CSV (укажи ссылку в CSV.visits).
+Важно: вставь свою CSV‑ссылку для визитов в CSV.visits (с листа, где ты вручную заполняешь строки).
+Рекомендуемые заголовки колонок на листе “Визиты”: Дата, ФИО, Комментарий, Тема, Организация (можно меньше — код ищет любые из них).
+
+Вот полный HTML:
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Графики учебного центра 2.0</title>
+  <style>
+    :root {
+      --bg:#e8edf2;
+      --bg-soft:#f3f6f8;
+      --card:#ffffff;
+      --card-2:#f8fafc;
+      --text:#122033;
+      --muted:#6b7a90;
+      --line:#d9e1ea;
+      --line-strong:#c8d2de;
+
+      --brand:#1f5f8b;
+      --brand-soft:#e7f1f8;
+
+      --today-bg:#e8f1ff;
+      --today-border:#9dbcf0;
+
+      --today-row-bg:#eef5ff;
+      --today-row-border:#b7cff6;
+
+      --vacation-bg:#fff3e6;
+      --vacation-border:#f3c88f;
+      --vacation-text:#9a5b00;
+
+      --conflict-bg:#fdecec;
+      --conflict-border:#efb0b0;
+      --conflict-text:#a12626;
+
+      --holiday-bg:#e8f7ee;
+      --holiday-border:#a9d8bc;
+      --holiday-text:#1f7a45;
+
+      --ok-bg:#edf8f1;
+      --ok-text:#1f7a45;
+
+      --warn-bg:#fff4e8;
+      --warn-text:#9a5b00;
+
+      --shadow:0 8px 24px rgba(24,39,75,0.06);
+      --radius-xl:24px;
+      --radius-lg:18px;
+      --radius-md:14px;
+      --radius-sm:10px;
+    }
+
+    * { box-sizing:border-box; }
+
+    html,body {
+      margin:0;
+      padding:0;
+      font-family:Arial,sans-serif;
+      color:var(--text);
+      background:linear-gradient(180deg,#edf2f6 0%, #e6ebf1 100%);
+    }
+
+    .hidden { display:none !important; }
+
+    .login {
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
+
+    .login-box {
+      width:340px;
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:28px;
+      padding:28px;
+      box-shadow:var(--shadow);
+    }
+
+    .login-chip {
+      display:inline-block;
+      padding:6px 12px;
+      border-radius:999px;
+      background:var(--brand-soft);
+      color:var(--brand);
+      font-size:12px;
+      font-weight:700;
+      margin-bottom:12px;
+    }
+
+    .login-box h2 {
+      margin:0 0 14px;
+      font-size:28px;
+    }
+
+    input, select {
+      width:100%;
+      border:1px solid var(--line-strong);
+      background:#fff;
+      border-radius:14px;
+      padding:12px 14px;
+      font-size:15px;
+      outline:none;
+      transition:.15s ease;
+    }
+
+    input:focus, select:focus {
+      border-color:#98b8d2;
+      box-shadow:0 0 0 4px rgba(31,95,139,0.08);
+    }
+
+    button {
+      border:none;
+      border-radius:14px;
+      padding:12px 14px;
+      background:var(--brand);
+      color:#fff;
+      font-size:15px;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+    button:hover { filter:brightness(0.97); }
+
+    .container {
+      max-width:1360px;
+      margin:0 auto;
+      padding:20px;
+    }
+
+    .header {
+      display:grid;
+      grid-template-columns: 1.2fr 260px 320px;
+      gap:16px;
+      margin-bottom:16px;
+    }
+
+    .panel {
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius-xl);
+      box-shadow:var(--shadow);
+    }
+
+    .hero {
+      padding:24px;
+    }
+
+    .hero-top {
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:16px;
+    }
+
+    .hero h1 {
+      margin:0;
+      font-size:42px;
+      line-height:1;
+      letter-spacing:-0.8px;
+    }
+
+    .hero-sub {
+      margin:10px 0 0;
+      color:var(--muted);
+      font-size:15px;
+    }
+
+    .hero-date-info {
+      margin-top:16px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+
+    .chip {
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:700;
+      border:1px solid transparent;
+      background:var(--bg-soft);
+      color:var(--text);
+    }
+
+    .chip.today {
+      background:var(--brand-soft);
+      color:var(--brand);
+      border-color:#cfe2f0;
+    }
+
+    .chip.holiday {
+      background:var(--holiday-bg);
+      color:var(--holiday-text);
+      border-color:var(--holiday-border);
+    }
+
+    .chip.vacation {
+      background:var(--vacation-bg);
+      color:var(--vacation-text);
+      border-color:var(--vacation-border);
+    }
+
+    .chip.conflict {
+      background:var(--conflict-bg);
+      color:var(--conflict-text);
+      border-color:var(--conflict-border);
+    }
+
+    .chip.link-chip {
+      cursor:pointer;
+      background:#eef4f8;
+      color:var(--brand);
+      border-color:#d7e4ef;
+    }
+
+    .now {
+      padding:20px;
+      background:linear-gradient(180deg,#2d516d 0%, #22465f 100%);
+      color:#fff;
+      border-color:rgba(255,255,255,0.08);
+    }
+
+    .now-label {
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:1px;
+      opacity:.85;
+      margin-bottom:10px;
+      font-weight:700;
+    }
+
+    .now-date {
+      font-size:22px;
+      line-height:1.25;
+      font-weight:700;
+      margin-bottom:12px;
+    }
+
+    .now-time {
+      font-size:56px;
+      line-height:1;
+      font-weight:800;
+      letter-spacing:1px;
+    }
+
+    .now-meta {
+      margin-top:14px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+    }
+
+    .now-pill {
+      padding:6px 9px;
+      border-radius:999px;
+      font-size:11px;
+      font-weight:700;
+      background:rgba(255,255,255,0.09);
+      border:1px solid rgba(255,255,255,0.10);
+    }
+
+    .calendar {
+      padding:16px;
+    }
+
+    .calendar-head {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:12px;
+    }
+
+    .calendar-title {
+      font-size:16px;
+      font-weight:700;
+    }
+
+    .calendar-nav {
+      display:flex;
+      gap:6px;
+    }
+
+    .calendar-nav button {
+      padding:7px 10px;
+      min-width:34px;
+      border-radius:10px;
+      background:#eef3f7;
+      color:var(--text);
+      border:1px solid var(--line);
+    }
+
+    .calendar-grid {
+      display:grid;
+      grid-template-columns:repeat(7,1fr);
+      gap:6px;
+    }
+
+    .calendar-weekday {
+      text-align:center;
+      font-size:11px;
+      font-weight:700;
+      color:var(--muted);
+      padding-bottom:4px;
+    }
+
+    .calendar-day {
+      min-height:40px;
+      border:1px solid transparent;
+      border-radius:12px;
+      background:var(--card-2);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      font-size:13px;
+      cursor:pointer;
+      transition:.15s ease;
+    }
+
+    .calendar-day:hover {
+      border-color:#bfd1df;
+    }
+
+    .calendar-day.empty {
+      background:transparent;
+      cursor:default;
+    }
+
+    .calendar-day.today {
+      background:var(--today-bg);
+      border-color:var(--today-border);
+      font-weight:700;
+    }
+
+    .calendar-day.selected {
+      box-shadow:inset 0 0 0 2px var(--brand);
+    }
+
+    .calendar-day.holiday {
+      background:#eef9f2;
+    }
+
+    .calendar-dots {
+      margin-top:3px;
+      display:flex;
+      gap:3px;
+      min-height:5px;
+    }
+
+    .calendar-dot {
+      width:5px;
+      height:5px;
+      border-radius:50%;
+    }
+
+    .calendar-dot.vacation { background:var(--vacation-text); }
+    .calendar-dot.conflict { background:var(--conflict-text); }
+    .calendar-dot.holiday { background:var(--holiday-text); }
+
+    .calendar-legend {
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+
+    .legend-item {
+      display:flex;
+      align-items:center;
+      gap:6px;
+      font-size:11px;
+      color:var(--muted);
+    }
+
+    .legend-dot {
+      width:8px;
+      height:8px;
+      border-radius:50%;
+    }
+
+    .stats {
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:12px;
+      margin-bottom:16px;
+    }
+
+    .stat {
+      padding:16px;
+    }
+
+    .stat-label {
+      font-size:12px;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.7px;
+      margin-bottom:8px;
+      font-weight:700;
+    }
+
+    .stat-value {
+      font-size:30px;
+      line-height:1;
+      font-weight:800;
+      margin-bottom:6px;
+    }
+
+    .stat-sub {
+      font-size:13px;
+      color:var(--muted);
+    }
+
+    .toolbar {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:14px;
+      flex-wrap:wrap;
+    }
+
+    .tabs {
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+
+    .tab {
+      background:#fff;
+      color:var(--text);
+      border:1px solid var(--line-strong);
+      border-radius:999px;
+      padding:10px 14px;
+      font-size:14px;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+    .tab.active {
+      background:var(--brand);
+      color:#fff;
+      border-color:var(--brand);
+    }
+
+    .search-wrap {
+      min-width:280px;
+      flex:1;
+      max-width:420px;
+      position:relative;
+    }
+
+    .search {
+      width:100%;
+      background:#fff;
+      border:1px solid var(--line-strong);
+      border-radius:14px;
+      padding:12px 40px 12px 14px;
+      margin:0;
+    }
+
+    .clear-search {
+      position:absolute;
+      right:12px;
+      top:50%;
+      transform:translateY(-50%);
+      background:none;
+      color:#8ca0b3;
+      padding:0;
+      width:auto;
+      border:none;
+      font-size:20px;
+      line-height:1;
+      cursor:pointer;
+    }
+
+    .card {
+      padding:18px;
+    }
+
+    .section-head {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:8px;
+      cursor:pointer;
+      user-select:none;
+    }
+
+    .section-left {
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+
+    .section-title {
+      font-size:22px;
+      font-weight:800;
+    }
+
+    .section-subtitle {
+      font-size:13px;
+      color:var(--muted);
+      margin-top:4px;
+    }
+
+    .section-meta {
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .counter {
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .collapse-btn {
+      border:1px solid var(--line);
+      background:#f5f8fb;
+      color:var(--text);
+      padding:8px 10px;
+      border-radius:10px;
+      font-size:12px;
+      font-weight:700;
+      width:auto;
+    }
+
+    .month-select {
+      width:auto;
+      min-width:150px;
+      padding:8px 10px;
+      border-radius:10px;
+      font-size:12px;
+      font-weight:700;
+    }
+
+    .rows {
+      transition: all .2s ease;
+    }
+
+    .rows.collapsed {
+      display:none;
+    }
+
+    .row {
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      padding:10px 2px;
+      border-bottom:1px solid var(--line);
+    }
+
+    .row:last-child { border-bottom:none; }
+
+    .row.conflict {
+      margin:6px 0;
+      padding:10px 12px;
+      border:1px solid var(--conflict-border);
+      border-radius:14px;
+      background:var(--conflict-bg);
+    }
+
+    .row.today {
+      background:var(--today-row-bg);
+      border:1px solid var(--today-row-border);
+      border-radius:14px;
+      padding:10px 12px;
+      margin:6px 0;
+    }
+
+    .avatar {
+      width:36px;
+      height:36px;
+      min-width:36px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:#d9e8f3;
+      color:var(--brand);
+      font-size:12px;
+      font-weight:800;
+      border:1px solid #c7d8e5;
+    }
+
+    .content {
+      flex:1;
+      min-width:0;
+    }
+
+    .main-line {
+      font-size:15px;
+      line-height:1.3;
+      font-weight:800;
+      word-break:break-word;
+    }
+
+    .meta {
+      margin-top:3px;
+      font-size:12px;
+      line-height:1.35;
+      color:var(--muted);
+    }
+
+    .badges {
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+      margin-top:6px;
+    }
+
+    .badge {
+      padding:4px 8px;
+      border-radius:999px;
+      font-size:11px;
+      font-weight:700;
+      border:1px solid transparent;
+      background:#eef4f8;
+      color:var(--brand);
+    }
+
+    .badge.conflict {
+      background:var(--conflict-bg);
+      color:var(--conflict-text);
+      border-color:var(--conflict-border);
+    }
+
+    .badge.vacation {
+      background:var(--vacation-bg);
+      color:var(--vacation-text);
+      border-color:var(--vacation-border);
+    }
+
+    .badge.holiday {
+      background:var(--holiday-bg);
+      color:var(--holiday-text);
+      border-color:var(--holiday-border);
+    }
+
+    .badge.ok {
+      background:var(--ok-bg);
+      color:var(--ok-text);
+    }
+
+    .badge.warn {
+      background:var(--warn-bg);
+      color:var(--warn-text);
+    }
+
+    .badge.today {
+      background:var(--brand-soft);
+      color:var(--brand);
+      border-color:#cfe2f0;
+    }
+
+    .empty {
+      color:var(--muted);
+      padding-top:4px;
+    }
+
+    .loader {
+      color:var(--muted);
+    }
+
+    .error-box {
+      background:var(--conflict-bg);
+      color:var(--conflict-text);
+      border:1px solid var(--conflict-border);
+      border-radius:14px;
+      padding:12px 14px;
+    }
+
+    mark {
+      background:#e7efff;
+      color:inherit;
+      border-radius:4px;
+      padding:0 2px;
+    }
+
+    @media (max-width:1200px) {
+      .header {
+        grid-template-columns:1fr 320px;
+      }
+      .now {
+        grid-column:1 / -1;
+      }
+      .stats {
+        grid-template-columns:repeat(2,1fr);
+      }
+    }
+
+    @media (max-width:900px) {
+      .header {
+        grid-template-columns:1fr;
+      }
+    }
+
+    @media (max-width:700px) {
+      .container { padding:14px; }
+      .hero h1 { font-size:34px; }
+      .stats { grid-template-columns:1fr; }
+      .now-time { font-size:46px; }
+      .toolbar { align-items:stretch; }
+      .search-wrap { max-width:none; width:100%; }
+      .section-meta { width:100%; }
+      .month-select { width:100%; }
+    }
+  </style>
+</head>
+<body>
+  <div id="login" class="login">
+    <div class="login-box">
+      <div class="login-chip">СИБУР · Учебный центр</div>
+      <h2>Графики</h2>
+      <input id="pass" type="password" placeholder="Пароль" />
+      <button onclick="login()">Войти</button>
+      <div id="err" class="hidden" style="margin-top:12px;color:#64748b;font-size:13px;">Неверный пароль</div>
+    </div>
+  </div>
+
+  <div id="app" class="hidden">
+    <div class="container">
+
+      <div class="header">
+        <div class="panel hero">
+          <div class="hero-top">
+            <div>
+              <h1>Графики</h1>
+              <p class="hero-sub">Единая страница дежурств, расписания и отпусков</p>
+            </div>
+            <div>
+              <button onclick="load()" style="width:auto;">Обновить</button>
+            </div>
+          </div>
+          <div id="dateInfo" class="hero-date-info"></div>
+        </div>
+
+        <div class="panel now">
+          <div class="now-label">Сейчас</div>
+          <div id="nowDate" class="now-date">—</div>
+          <div id="nowTime" class="now-time">--:--</div>
+          <div id="nowMeta" class="now-meta"></div>
+        </div>
+
+        <div class="panel calendar">
+          <div class="calendar-head">
+            <div id="calendarTitle" class="calendar-title">Календарь</div>
+            <div class="calendar-nav">
+              <button type="button" onclick="changeCalendarMonth(-1)">‹</button>
+              <button type="button" onclick="changeCalendarMonth(1)">›</button>
+            </div>
+          </div>
+          <div id="calendarWeekdays" class="calendar-grid"></div>
+          <div id="calendarDays" class="calendar-grid"></div>
+          <div class="calendar-legend">
+            <div class="legend-item"><span class="legend-dot" style="background:var(--vacation-text)"></span><span>Отпуск</span></div>
+            <div class="legend-item"><span class="legend-dot" style="background:var(--conflict-text)"></span><span>Замена</span></div>
+            <div class="legend-item"><span class="legend-dot" style="background:var(--holiday-text)"></span><span>Праздник</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="statsGrid" class="stats"></div>
+
+      <div class="toolbar">
+        <div class="tabs">
+          <div class="tab active" onclick="setView('all', this)">Все</div>
+          <div class="tab" onclick="setView('watch', this)">Вахта</div>
+          <div class="tab" onclick="setView('tours', this)">Экскурсии</div>
+          <div class="tab" onclick="setView('schedule', this)">Расписание</div>
+          <div class="tab" onclick="setView('vacation', this)">Отпуска</div>
+          <div class="tab" onclick="setView('visits', this)">Визиты</div>
+        </div>
+
+        <div class="search-wrap">
+          <input
+            id="searchInput"
+            class="search"
+            type="text"
+            placeholder="Поиск по дате, имени, комментарию..."
+            oninput="setSearch(this.value)"
+          />
+          <button class="clear-search" onclick="clearSearch()" title="Очистить">×</button>
+        </div>
+      </div>
+
+      <div id="content">
+        <div class="panel card">
+          <div class="loader">Загрузка данных...</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const PASSWORD = "2305";
+
+    const CSV = {
+      watch: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_j9JH9OK3SyTfOF0dtATg3M-eBFtfW5Cv3jorD1fTU6VcIQTAPhlkExjG6bUAnT2tNAzMmtO1PRci/pub?gid=1954389003&single=true&output=csv",
+      tours: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_j9JH9OK3SyTfOF0dtATg3M-eBFtfW5Cv3jorD1fTU6VcIQTAPhlkExjG6bUAnT2tNAzMmtO1PRci/pub?gid=1910645083&single=true&output=csv",
+      schedule: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_j9JH9OK3SyTfOF0dtATg3M-eBFtfW5Cv3jorD1fTU6VcIQTAPhlkExjG6bUAnT2tNAzMmtO1PRci/pub?gid=2107515437&single=true&output=csv",
+      vacation: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_j9JH9OK3SyTfOF0dtATg3M-eBFtfW5Cv3jorD1fTU6VcIQTAPhlkExjG6bUAnT2tNAzMmtO1PRci/pub?gid=899395990&single=true&output=csv",
+      holidays: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_j9JH9OK3SyTfOF0dtATg3M-eBFtfW5Cv3jorD1fTU6VcIQTAPhlkExjG6bUAnT2tNAzMmtO1PRci/pub?gid=72554172&single=true&output=csv",
+      visits: ""
+    };
+
+    let state = {
+      view: "all",
+      search: "",
+      selectedDate: "",
+      calendarYear: new Date().getFullYear(),
+      calendarMonth: new Date().getMonth(),
+      nowIntervalId: null,
+      collapsed: {
+        watch: false,
+        tours: false,
+        schedule: false,
+        vacation: false,
+        visits: false
+      },
+      monthFilter: {
+        watch: "all",
+        tours: "all",
+        visits: "all"
+      },
+      data: {
+        watch: [],
+        tours: [],
+        schedule: [],
+        vacation: [],
+        holidays: [],
+        visits: []
+      }
+    };
+
+    function login() {
+      const passInput = document.getElementById("pass");
+      const loginDiv = document.getElementById("login");
+      const appDiv = document.getElementById("app");
+      const err = document.getElementById("err");
+
+      if (passInput.value === PASSWORD) {
+        err.classList.add("hidden");
+        loginDiv.style.display = "none";
+        appDiv.classList.remove("hidden");
+        load();
+      } else {
+        err.classList.remove("hidden");
+      }
+    }
+
+    function setView(view, el) {
+      state.view = view;
+      document.querySelectorAll(".tab").forEach(tab => tab.classList.remove("active"));
+      if (el) el.classList.add("active");
+      render();
+    }
+
+    function setSearch(value) {
+      state.search = (value || "").trim().toLowerCase();
+      render();
+    }
+
+    function clearSearch() {
+      document.getElementById("searchInput").value = "";
+      state.search = "";
+      render();
+    }
+
+    function toggleSection(key) {
+      state.collapsed[key] = !state.collapsed[key];
+      render();
+    }
+
+    function setMonthFilter(section, month) {
+      state.monthFilter[section] = month;
+      render();
+    }
+
+    function setSelectedDate(key) {
+      state.selectedDate = state.selectedDate === key ? "" : key;
+      render();
+    }
+
+    function clearSelectedDate() {
+      state.selectedDate = "";
+      render();
+    }
+
+    function changeCalendarMonth(delta) {
+      state.calendarMonth += delta;
+      if (state.calendarMonth < 0) {
+        state.calendarMonth = 11;
+        state.calendarYear -= 1;
+      }
+      if (state.calendarMonth > 11) {
+        state.calendarMonth = 0;
+        state.calendarYear += 1;
+      }
+      renderCalendar();
+    }
+
+    function detectDelimiter(headerLine) {
+      const semicolons = (headerLine.match(/;/g) || []).length;
+      const commas = (headerLine.match(/,/g) || []).length;
+      return semicolons > commas ? ";" : ",";
+    }
+
+    function parseCSVLine(line, delimiter) {
+      const result = [];
+      let current = "";
+      let insideQuotes = false;
+
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        const nextChar = line[i + 1];
+
+        if (char === '"') {
+          if (insideQuotes && nextChar === '"') {
+            current += '"';
+            i++;
+          } else {
+            insideQuotes = !insideQuotes;
+          }
+        } else if (char === delimiter && !insideQuotes) {
+          result.push(current.trim());
+          current = "";
+        } else {
+          current += char;
+        }
+      }
+
+      result.push(current.trim());
+      return result.map(v => v.replace(/^"|"$/g, "").trim());
+    }
+
+    function parse(text) {
+      const cleanText = text.replace(/\r/g, "").trim();
+      if (!cleanText) return [];
+
+      const lines = cleanText.split("\n").filter(line => line.trim() !== "");
+      if (lines.length <= 1) return [];
+
+      const delimiter = detectDelimiter(lines[0]);
+      const headers = parseCSVLine(lines[0], delimiter).map(h => String(h).trim().toLowerCase());
+
+      return lines.slice(1).map(line => {
+        const values = parseCSVLine(line, delimiter);
+        const obj = {};
+        headers.forEach((h, i) => obj[h] = values[i] || "");
+        return obj;
+      });
+    }
+
+    function safe(value) {
+      if (value === undefined || value === null) return "";
+      return String(value).trim();
+    }
+
+    function escapeHtml(str) {
+      return safe(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    function escapeRegExp(str) {
+      return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    }
+
+    function highlight(text) {
+      const value = safe(text);
+      if (!state.search) return escapeHtml(value);
+      const regex = new RegExp("(" + escapeRegExp(state.search) + ")", "ig");
+      return escapeHtml(value).replace(regex, "<mark>$1</mark>");
+    }
+
+    function getInitials(text) {
+      const cleaned = safe(text).replace(/\s+/g, " ").trim();
+      if (!cleaned) return "—";
+      const parts = cleaned.split(" ").filter(Boolean);
+      if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+      return (parts[0][0] + (parts[1]?.[0] || "")).toUpperCase();
+    }
+
+    function parseDate(value) {
+      const v = safe(value);
+      if (!v) return null;
+
+      if (/^\d{2}\.\d{2}\.\d{4}$/.test(v)) {
+        const [d, m, y] = v.split(".").map(Number);
+        return new Date(y, m - 1, d);
+      }
+
+      if (/^\d{4}-\d{2}-\d{2}$/.test(v)) {
+        const [y, m, d] = v.split("-").map(Number);
+        return new Date(y, m - 1, d);
+      }
+
+      return null;
+    }
+
+    function startOfDay(date) {
+      const d = new Date(date);
+      d.setHours(0,0,0,0);
+      return d;
+    }
+
+    function dateKey(date) {
+      return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`;
+    }
+
+    function formatDateKey(key) {
+      if (!key) return "";
+      const [y,m,d] = key.split("-");
+      return `${d}.${m}.${y}`;
+    }
+
+    function matchesSearch(values) {
+      if (!state.search) return true;
+      const joined = values.map(safe).join(" ").toLowerCase();
+      return joined.includes(state.search);
+    }
+
+    function isSelectedDateMatch(textDate) {
+      if (!state.selectedDate) return true;
+      const d = parseDate(textDate);
+      if (!d) return false;
+      return dateKey(d) === state.selectedDate;
+    }
+
+    function isTodayDate(textDate) {
+      const d = parseDate(textDate);
+      if (!d) return false;
+      return dateKey(d) === dateKey(new Date());
+    }
+
+    function parsePeriod(periodText) {
+      const match = safe(periodText).match(/(\d{2}\.\d{2}\.\d{4})\D+(\d{2}\.\d{2}\.\d{4})/);
+      if (!match) return null;
+      return {
+        start: parseDate(match[1]),
+        end: parseDate(match[2])
+      };
+    }
+
+    function isSelectedPeriodMatch(periodText) {
+      if (!state.selectedDate) return true;
+      const period = parsePeriod(periodText);
+      if (!period || !period.start || !period.end) return false;
+      const selected = parseDate(state.selectedDate);
+      if (!selected) return false;
+      const d = startOfDay(selected).getTime();
+      return d >= startOfDay(period.start).getTime() && d <= startOfDay(period.end).getTime();
+    }
+
+    function isTodayInPeriod(periodText) {
+      const period = parsePeriod(periodText);
+      if (!period || !period.start || !period.end) return false;
+      const today = startOfDay(new Date()).getTime();
+      return today >= startOfDay(period.start).getTime() && today <= startOfDay(period.end).getTime();
+    }
+
+    function getHolidayMap() {
+      const map = {};
+      state.data.holidays.forEach(row => {
+        const d = parseDate(row["дата"]);
+        if (!d) return;
+        map[dateKey(d)] = row["название"] || "Праздник";
+      });
+      return map;
+    }
+
+    function buildCalendarData() {
+      const map = {};
+      const holidayMap = getHolidayMap();
+
+      function ensure(key) {
+        if (!map[key]) map[key] = { vacation:false, conflict:false, holiday:false };
+        return map[key];
+      }
+
+      Object.keys(holidayMap).forEach(key => {
+        ensure(key).holiday = true;
+      });
+
+      state.data.vacation.forEach(row => {
+        const start = parseDate(row["начало"]);
+        const end = parseDate(row["конец"]);
+        if (!start || !end) return;
+
+        let d = startOfDay(start);
+        const finish = startOfDay(end);
+
+        while (d <= finish) {
+          ensure(dateKey(d)).vacation = true;
+          d = new Date(d);
+          d.setDate(d.getDate() + 1);
+        }
+      });
+
+      state.data.watch.forEach(row => {
+        const date = parseDate(row["дата"]);
+        const status = safe(row["статус"]).toLowerCase();
+        if (!date) return;
+        if (status.includes("замена") || status.includes("отпуск") || safe(row["замена"])) {
+          ensure(dateKey(date)).conflict = true;
+        }
+      });
+
+      state.data.schedule.forEach(row => {
+        const status = safe(row["статус"]).toLowerCase();
+        if (!(status.includes("замена") || status.includes("отпуск") || safe(row["замена"]))) return;
+        const period = parsePeriod(row["период"]);
+        if (!period) return;
+
+        let d = startOfDay(period.start);
+        const finish = startOfDay(period.end);
+        while (d <= finish) {
+          ensure(dateKey(d)).conflict = true;
+          d = new Date(d);
+          d.setDate(d.getDate() + 1);
+        }
+      });
+
+      return map;
+    }
+
+    function renderCalendar() {
+      const titleEl = document.getElementById("calendarTitle");
+      const weekdaysEl = document.getElementById("calendarWeekdays");
+      const daysEl = document.getElementById("calendarDays");
+      if (!titleEl || !weekdaysEl || !daysEl) return;
+
+      const year = state.calendarYear;
+      const month = state.calendarMonth;
+      const todayKey = dateKey(new Date());
+
+      const monthNames = ["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"];
+      titleEl.textContent = `${monthNames[month]} ${year}`;
+
+      weekdaysEl.innerHTML = ["Пн","Вт","Ср","Чт","Пт","Сб","Вс"]
+        .map(d => `<div class="calendar-weekday">${d}</div>`)
+        .join("");
+
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+      const daysInMonth = lastDay.getDate();
+
+      let startOffset = firstDay.getDay();
+      startOffset = startOffset === 0 ? 6 : startOffset - 1;
+
+      const dataMap = buildCalendarData();
+      let html = "";
+
+      for (let i = 0; i < startOffset; i++) {
+        html += `<div class="calendar-day empty"></div>`;
+      }
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const date = new Date(year, month, day);
+        const key = dateKey(date);
+        const flags = dataMap[key] || { vacation:false, conflict:false, holiday:false };
+        const isToday = key === todayKey;
+        const isSelected = key === state.selectedDate;
+
+        const dots = [];
+        if (flags.vacation) dots.push(`<span class="calendar-dot vacation"></span>`);
+        if (flags.conflict) dots.push(`<span class="calendar-dot conflict"></span>`);
+        if (flags.holiday) dots.push(`<span class="calendar-dot holiday"></span>`);
+
+        html += `
+          <div class="calendar-day ${isToday ? "today" : ""} ${isSelected ? "selected" : ""} ${flags.holiday ? "holiday" : ""}"
+               onclick="setSelectedDate('${key}')">
+            <div>${day}</div>
+            <div class="calendar-dots">${dots.join("")}</div>
+          </div>
+        `;
+      }
+
+      daysEl.innerHTML = html;
+    }
+
+    function renderSelectedDateInfo() {
+      const el = document.getElementById("dateInfo");
+      if (!el) return;
+
+      const holidayMap = getHolidayMap();
+
+      if (!state.selectedDate) {
+        el.innerHTML = `<span class="chip today">Выбери день в календаре</span>`;
+        return;
+      }
+
+      const chips = [`<span class="chip today"><strong>${formatDateKey(state.selectedDate)}</strong></span>`];
+      if (holidayMap[state.selectedDate]) {
+        chips.push(`<span class="chip holiday">${escapeHtml(holidayMap[state.selectedDate])}</span>`);
+      }
+
+      chips.push(`<span class="chip link-chip" onclick="clearSelectedDate()">Сбросить дату</span>`);
+      el.innerHTML = chips.join("");
+    }
+
+    function computeStats() {
+      const today = new Date();
+      const todayKey = dateKey(today);
+
+      const vacationNow = state.data.vacation.filter(row => {
+        const start = parseDate(row["начало"]);
+        const end = parseDate(row["конец"]);
+        if (!start || !end) return false;
+        const t = startOfDay(today).getTime();
+        return t >= startOfDay(start).getTime() && t <= startOfDay(end).getTime();
+      }).length;
+
+      const conflictsToday =
+        state.data.watch.filter(row => {
+          const d = parseDate(row["дата"]);
+          if (!d) return false;
+          return dateKey(d) === todayKey &&
+            (safe(row["статус"]).toLowerCase().includes("замена") ||
+             safe(row["статус"]).toLowerCase().includes("отпуск") ||
+             safe(row["замена"]));
+        }).length;
+
+      const holidayMap = getHolidayMap();
+
+      return {
+        watch: state.data.watch.length,
+        tours: state.data.tours.length,
+        schedule: state.data.schedule.length,
+        vacation: state.data.vacation.length,
+        vacationNow,
+        conflictsToday,
+        holidayToday: holidayMap[todayKey] || "",
+        selectedDate: state.selectedDate ? formatDateKey(state.selectedDate) : "Не выбрана"
+      };
+    }
+
+    function renderNowCard() {
+      const nowDateEl = document.getElementById("nowDate");
+      const nowTimeEl = document.getElementById("nowTime");
+      const nowMetaEl = document.getElementById("nowMeta");
+      if (!nowDateEl || !nowTimeEl || !nowMetaEl) return;
+
+      const now = new Date();
+      const months = [
+        "января","февраля","марта","апреля","мая","июня",
+        "июля","августа","сентября","октября","ноября","декабря"
+      ];
+
+      const day = now.getDate();
+      const month = months[now.getMonth()];
+      const year = now.getFullYear();
+      const hh = String(now.getHours()).padStart(2, "0");
+      const mm = String(now.getMinutes()).padStart(2, "0");
+      const ss = String(now.getSeconds()).padStart(2, "0");
+
+      nowDateEl.textContent = `${day} ${month} ${year} г.`;
+      nowTimeEl.textContent = `${hh}:${mm}`;
+
+      const stats = computeStats();
+      const pills = [];
+      pills.push(`<span class="now-pill">В отпуске: ${stats.vacationNow}</span>`);
+      pills.push(`<span class="now-pill">Конфликты: ${stats.conflictsToday}</span>`);
+      if (stats.holidayToday) pills.push(`<span class="now-pill">${escapeHtml(stats.holidayToday)}</span>`);
+      pills.push(`<span class="now-pill">${hh}:${mm}:${ss}</span>`);
+
+      nowMetaEl.innerHTML = pills.join("");
+    }
+
+    function renderStats() {
+      const el = document.getElementById("statsGrid");
+      if (!el) return;
+
+      const stats = computeStats();
+
+      el.innerHTML = `
+        <div class="panel stat">
+          <div class="stat-label">Вахта</div>
+          <div class="stat-value">${stats.watch}</div>
+          <div class="stat-sub">Рабочие дни</div>
+        </div>
+        <div class="panel stat">
+          <div class="stat-label">Экскурсии</div>
+          <div class="stat-value">${stats.tours}</div>
+          <div class="stat-sub">Ежедневные назначения</div>
+        </div>
+        <div class="panel stat">
+          <div class="stat-label">Сейчас в отпуске</div>
+          <div class="stat-value">${stats.vacationNow}</div>
+          <div class="stat-sub">Активные отпускные периоды</div>
+        </div>
+        <div class="panel stat">
+          <div class="stat-label">Выбранная дата</div>
+          <div class="stat-value" style="font-size:22px;">${stats.selectedDate}</div>
+          <div class="stat-sub">Оперативный срез по дню</div>
+        </div>
+      `;
+    }
+
+    function finalPerson(row) {
+      return safe(row["итог"]) || safe(row["замена"]) || safe(row["назначен"]);
+    }
+
+    function rowMonthValue(row) {
+      return safe(row["месяц"]);
+    }
+
+    function getMonthNamesRu() {
+      return [
+        "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
+        "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"
+      ];
+    }
+
+    function monthSelectHtml(sectionKey, selectedValue) {
+      const months = getMonthNamesRu();
+      return `
+        <select
+          class="month-select"
+          onchange="setMonthFilter('${sectionKey}', this.value)"
+          onclick="event.stopPropagation()"
+        >
+          <option value="all" ${selectedValue === "all" ? "selected" : ""}>Все месяцы</option>
+          ${months.map(m => `<option value="${m}" ${selectedValue === m ? "selected" : ""}>${m}</option>`).join("")}
+        </select>
+      `;
+    }
+
+    function renderRow({ avatarText, main, meta, badges = [], conflict = false, today = false }) {
+      return `
+        <div class="row ${conflict ? "conflict" : ""} ${today ? "today" : ""}">
+          <div class="avatar">${escapeHtml(getInitials(avatarText))}</div>
+          <div class="content">
+            <div class="main-line">${main}</div>
+            ${meta ? `<div class="meta">${meta}</div>` : ``}
+            ${badges.length ? `
+              <div class="badges">
+                ${badges.map(tag => {
+                  const cls =
+                    tag === "Конфликт" ? "conflict" :
+                    tag === "Отпуск" ? "vacation" :
+                    tag === "Праздник" ? "holiday" :
+                    tag === "ОК" ? "ok" :
+                    tag === "Сегодня" ? "today" :
+                    "warn";
+                  return `<span class="badge ${cls}">${escapeHtml(tag)}</span>`;
+                }).join("")}
+              </div>
+            ` : ``}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderSection(title, key, subtitle, rows, renderFn, withMonthFilter = false) {
+      const collapsed = state.collapsed[key];
+      const selectedMonth = state.monthFilter[key] || "all";
+
+      const filteredRows = withMonthFilter
+        ? rows.filter(row => {
+            if (selectedMonth === "all") return true;
+            return rowMonthValue(row).includes(selectedMonth);
+          })
+        : rows;
+
+      return `
+        <div class="panel card">
+          <div class="section-head" onclick="toggleSection('${key}')">
+            <div class="section-left">
+              <div>
+                <div class="section-title">${title}</div>
+                <div class="section-subtitle">${subtitle}</div>
+              </div>
+            </div>
+            <div class="section-meta">
+              ${withMonthFilter ? monthSelectHtml(key, selectedMonth) : ""}
+              <div class="counter">${filteredRows.length} записей</div>
+              <button class="collapse-btn" type="button" onclick="event.stopPropagation(); toggleSection('${key}')">
+                ${collapsed ? "Развернуть" : "Свернуть"}
+              </button>
+            </div>
+          </div>
+          <div class="rows ${collapsed ? "collapsed" : ""}">
+            ${filteredRows.length ? filteredRows.map(renderFn).join("") : `<div class="empty">Ничего не найдено</div>`}
+          </div>
+        </div>
+      `;
+    }
+
+    function render() {
+      const holidayMap = getHolidayMap();
+      let html = "";
+
+      const watchRows = state.data.watch.filter(row =>
+        matchesSearch([row["дата"], row["день"], row["назначен"], row["замена"], row["итог"], row["статус"], row["комментарий"]]) &&
+        isSelectedDateMatch(row["дата"])
+      );
+
+      const toursRows = state.data.tours.filter(row =>
+        matchesSearch([row["дата"], row["день"], row["назначен"], row["замена"], row["итог"], row["статус"], row["комментарий"]]) &&
+        isSelectedDateMatch(row["дата"])
+      );
+
+      const scheduleRows = state.data.schedule.filter(row =>
+        matchesSearch([row["неделя"], row["период"], row["назначен"], row["замена"], row["итог"], row["статус"], row["комментарий"]]) &&
+        isSelectedPeriodMatch(row["период"])
+      );
+
+      const vacationRows = state.data.vacation.filter(row =>
+        matchesSearch([row["фио"], row["начало"], row["конец"]]) &&
+        (!state.selectedDate || (() => {
+          const start = parseDate(row["начало"]);
+          const end = parseDate(row["конец"]);
+          const selected = parseDate(state.selectedDate);
+          if (!start || !end || !selected) return false;
+          const d = startOfDay(selected).getTime();
+          return d >= startOfDay(start).getTime() && d <= startOfDay(end).getTime();
+        })())
+      );
+
+      if (state.view === "all" || state.view === "watch") {
+        html += renderSection(
+          "Вахта",
+          "watch",
+          "Рабочие дни, отдельный пул сотрудников",
+          watchRows,
+          row => {
+            const date = safe(row["дата"]);
+            const status = safe(row["статус"]);
+            const conflict = !!safe(row["замена"]) || status.toLowerCase().includes("замена") || status.toLowerCase().includes("отпуск");
+            const dateObj = parseDate(date);
+            const holiday = dateObj ? holidayMap[dateKey(dateObj)] : "";
+            const isToday = isTodayDate(date);
+
+            const badges = [];
+            if (status) badges.push(status === "ОК" ? "ОК" : "Замена");
+            if (conflict) badges.push("Конфликт");
+            if (holiday) badges.push("Праздник");
+            if (isToday) badges.push("Сегодня");
+
+            return renderRow({
+              avatarText: finalPerson(row),
+              main: `${highlight(date)} — ${highlight(finalPerson(row))}`,
+              meta: [
+                safe(row["день"]),
+                safe(row["замена"]) ? `Замена: ${safe(row["замена"])}` : "",
+                safe(row["комментарий"])
+              ].filter(Boolean).map(highlight).join(" · "),
+              badges,
+              conflict,
+              today: isToday
+            });
+          },
+          true
+        );
+      }
+
+      if (state.view === "all" || state.view === "tours") {
+        html += renderSection(
+          "Экскурсии",
+          "tours",
+          "Каждый рабочий день, общий пул сотрудников",
+          toursRows,
+          row => {
+            const date = safe(row["дата"]);
+            const status = safe(row["статус"]);
+            const conflict = !!safe(row["замена"]) || status.toLowerCase().includes("замена") || status.toLowerCase().includes("отпуск");
+            const dateObj = parseDate(date);
+            const holiday = dateObj ? holidayMap[dateKey(dateObj)] : "";
+            const isToday = isTodayDate(date);
+
+            const badges = [];
+            if (status) badges.push(status === "ОК" ? "ОК" : "Замена");
+            if (conflict) badges.push("Конфликт");
+            if (holiday) badges.push("Праздник");
+            if (isToday) badges.push("Сегодня");
+
+            return renderRow({
+              avatarText: finalPerson(row),
+              main: `${highlight(date)} — ${highlight(finalPerson(row))}`,
+              meta: [
+                safe(row["день"]),
+                safe(row["замена"]) ? `Замена: ${safe(row["замена"])}` : "",
+                safe(row["комментарий"])
+              ].filter(Boolean).map(highlight).join(" · "),
+              badges,
+              conflict,
+              today: isToday
+            });
+          },
+          true
+        );
+      }
+
+      if (state.view === "all" || state.view === "schedule") {
+        html += renderSection(
+          "Расписание",
+          "schedule",
+          "Один ответственный на рабочую неделю",
+          scheduleRows,
+          row => {
+            const status = safe(row["статус"]);
+            const conflict = !!safe(row["замена"]) || status.toLowerCase().includes("замена") || status.toLowerCase().includes("отпуск");
+            const isToday = isTodayInPeriod(row["период"]);
+
+            const badges = [];
+            if (status) badges.push(status === "ОК" ? "ОК" : "Замена");
+            if (conflict) badges.push("Конфликт");
+            if (isToday) badges.push("Сегодня");
+
+            return renderRow({
+              avatarText: finalPerson(row),
+              main: `Неделя ${highlight(row["неделя"])} — ${highlight(finalPerson(row))}`,
+              meta: [
+                safe(row["период"]),
+                safe(row["замена"]) ? `Замена: ${safe(row["замена"])}` : "",
+                safe(row["комментарий"])
+              ].filter(Boolean).map(highlight).join(" · "),
+              badges,
+              conflict,
+              today: isToday
+            });
+          }
+        );
+      }
+
+      if (state.view === "all" || state.view === "vacation") {
+        html += renderSection(
+          "Отпуска",
+          "vacation",
+          "Годовой список отпускных периодов",
+          vacationRows,
+          row => renderRow({
+            avatarText: safe(row["фио"]),
+            main: `${highlight(row["фио"])}`,
+            meta: [`${highlight(row["начало"])} → ${highlight(row["конец"])}`],
+            badges: ["Отпуск"],
+            conflict: false
+          })
+        );
+      }
+
+
+      if (state.view === "all" || state.view === "visits") {
+        const visitsRows = state.data.visits.filter(row =>
+          matchesSearch([row["дата"], row["фио"], row["комментарий"], row["тема"], row["гость"], row["посетитель"], row["организация"]]) &&
+          isSelectedDateMatch(row["дата"])
+        );
+
+        html += renderSection(
+          "Визиты",
+          "visits",
+          "Ручной ввод посещений и встреч",
+          visitsRows,
+          row => {
+            const date = safe(row["дата"]);
+            const person = safe(row["фио"]) || safe(row["гость"]) || safe(row["посетитель"]) || safe(row["организация"]) || safe(row["тема"]) || "";
+            const isToday = isTodayDate(date);
+
+            const badges = [];
+            if (isToday) badges.push("Сегодня");
+
+            return renderRow({
+              avatarText: person || date,
+              main: `${highlight(date)} — ${highlight(person)}`,
+              meta: [
+                safe(row["комментарий"]),
+                safe(row["тема"]) ? `Тема: ${safe(row["тема"])}` : "",
+                safe(row["организация"]) ? `Орг.: ${safe(row["организация"])}` : ""
+              ].filter(Boolean).map(highlight).join(" · "),
+              badges,
+              conflict: false,
+              today: isToday
+            });
+          },
+          true
+        );
+      }
+      if (!html) {
+        html = `
+          <div class="panel card">
+            <div class="empty">Ничего не найдено</div>
+          </div>
+        `;
+      }
+
+      document.getElementById("content").innerHTML = html;
+      renderSelectedDateInfo();
+      renderCalendar();
+      renderNowCard();
+      renderStats();
+    }
+
+
+    function loadCsv(url) {
+      if (!url) return Promise.resolve("" );
+      return fetch(url).then(r => r.text());
+    }
+
+    async function load() {
+      try {
+        document.getElementById("content").innerHTML = `
+          <div class="panel card">
+            <div class="loader">Загрузка данных...</div>
+          </div>
+        `;
+
+        const [w, t, s, v, h, vi] = await Promise.all([
+          loadCsv(CSV.watch),
+          loadCsv(CSV.tours),
+          loadCsv(CSV.schedule),
+          loadCsv(CSV.vacation),
+          loadCsv(CSV.holidays),
+          loadCsv(CSV.visits)
+        ]);
+
+        state.data.watch = parse(w);
+        state.data.tours = parse(t);
+        state.data.schedule = parse(s);
+        state.data.vacation = parse(v);
+        state.data.holidays = parse(h);
+        state.data.visits = parse(vi);
+
+        renderNowCard();
+        if (state.nowIntervalId) clearInterval(state.nowIntervalId);
+        state.nowIntervalId = setInterval(renderNowCard, 1000);
+
+        render();
+      } catch (e) {
+        document.getElementById("content").innerHTML = `
+          <div class="panel card">
+            <div class="error-box">Не удалось загрузить данные. Проверь ссылки CSV.</div>
+          </div>
+        `;
+        console.error("Ошибка загрузки CSV:", e);
+      }
+    }
+
+    document.getElementById("pass").addEventListener("keydown", function(e) {
+      if (e.key === "Enter") login();
+    });
+  </script>
+</body>
+</html>
