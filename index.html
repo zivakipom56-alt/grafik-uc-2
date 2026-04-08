@@ -1,4 +1,9 @@
-Исправил загрузку данных: добавил умный fallback через прокси (если Google блокирует CORS), и диагностику (если Google отдаёт HTML вместо CSV). Теперь данные подтянутся даже если прямой доступ блокируется. Ниже полный HTML с правкой — просто замени файл целиком.
+Ниже твоя **последняя рабочая версия**, в которую я просто **добавил логотипы** (экран входа + шапка). Логотипы берутся из файлов рядом с HTML:
+
+- `sibur-logo.png` — для экрана входа  
+- `sibur-intech.png` — для шапки  
+
+Если файлов нет, срабатывает текстовый fallback и страница не ломается.
 
 ```html
 <!DOCTYPE html>
@@ -77,11 +82,11 @@
     }
 
     .login-box {
-      width:380px;
+      width:340px;
       background:var(--card);
       border:1px solid var(--line);
       border-radius:28px;
-      padding:28px 28px 30px;
+      padding:28px;
       box-shadow:var(--shadow);
       text-align:center;
     }
@@ -89,7 +94,7 @@
     .login-box.logo-fallback::before {
       content:"СИБУР";
       display:block;
-      font-size:22px;
+      font-size:20px;
       font-weight:800;
       color:var(--brand);
       margin-bottom:12px;
@@ -97,10 +102,10 @@
     }
 
     .login-logo {
-      width:240px;
+      width:220px;
       max-width:100%;
       height:auto;
-      margin:0 auto 16px;
+      margin:0 auto 14px;
       display:block;
     }
 
@@ -279,9 +284,9 @@
 
     .now {
       padding:18px;
-      background:linear-gradient(180deg,#f2fbfa 0%, #e8f5f4 100%);
-      color:var(--text);
-      border:1px solid #cfe4e2;
+      background:linear-gradient(180deg,#0f7e7a 0%, #0b5f5c 100%);
+      color:#fff;
+      border:1px solid rgba(255,255,255,0.12);
     }
 
     .now-label {
@@ -307,16 +312,6 @@
       letter-spacing:1px;
     }
 
-    .now-time-wrap {
-      display:inline-block;
-      padding:10px 14px;
-      border-radius:16px;
-      background:linear-gradient(180deg,#f2fbfa 0%, #e8f5f4 100%);
-      border:1px solid #cfe4e2;
-      box-shadow:0 10px 18px rgba(15,23,42,0.06);
-      margin-bottom:10px;
-    }
-
     .now-meta {
       margin-top:14px;
       display:flex;
@@ -329,9 +324,8 @@
       border-radius:999px;
       font-size:11px;
       font-weight:700;
-      background:#e0f1f0;
-      border:1px solid #c3e2df;
-      color:var(--text);
+      background:rgba(255,255,255,0.09);
+      border:1px solid rgba(255,255,255,0.10);
     }
 
     .calendar {
@@ -840,39 +834,41 @@
       <div class="panel header-panel">
         <div class="header-grid">
           <div class="panel hero">
-          <div class="hero-top">
-            <div>
-              <img class="logo" src="sibur-intech.png" alt="СИБУРИНТЕХ" onerror="this.style.display='none'; this.parentElement.classList.add('logo-fallback-inner')" />
-              <h1>Графики</h1>
-              <p class="hero-sub">Единая страница дежурств, расписания и отпусков</p>
+            <div class="hero-top">
+              <div>
+                <img class="logo" src="sibur-intech.png" alt="СИБУРИНТЕХ" onerror="this.style.display='none'; this.parentElement.classList.add('logo-fallback-inner')" />
+                <h1>Графики</h1>
+                <p class="hero-sub">Единая страница дежурств, расписания и отпусков</p>
+              </div>
+              <div>
+                <button onclick="load()" style="width:auto;">Обновить</button>
+              </div>
             </div>
-            <div>
-              <button onclick="load()" style="width:auto;">Обновить</button>
-            </div>
+            <div id="dateInfo" class="hero-date-info"></div>
           </div>
-          <div id="dateInfo" class="hero-date-info"></div>
-        </div>
+
           <div class="panel now">
-          <div class="now-label">Сейчас</div>
-          <div id="nowDate" class="now-date">—</div>
-          <div class="now-time-wrap"><div id="nowTime" class="now-time">--:--</div></div>
-          <div id="nowMeta" class="now-meta"></div>
-        </div>
+            <div class="now-label">Сейчас</div>
+            <div id="nowDate" class="now-date">—</div>
+            <div id="nowTime" class="now-time">--:--</div>
+            <div id="nowMeta" class="now-meta"></div>
+          </div>
+
           <div class="panel calendar">
-          <div class="calendar-head">
-            <div id="calendarTitle" class="calendar-title">Календарь</div>
-            <div class="calendar-nav">
-              <button type="button" onclick="changeCalendarMonth(-1)">‹</button>
-              <button type="button" onclick="changeCalendarMonth(1)">›</button>
+            <div class="calendar-head">
+              <div id="calendarTitle" class="calendar-title">Календарь</div>
+              <div class="calendar-nav">
+                <button type="button" onclick="changeCalendarMonth(-1)">‹</button>
+                <button type="button" onclick="changeCalendarMonth(1)">›</button>
+              </div>
             </div>
-          </div>
-          <div id="calendarWeekdays" class="calendar-grid"></div>
-          <div id="calendarDays" class="calendar-grid"></div>
-          <div class="calendar-legend">
-            <div class="legend-item"><span class="legend-dot" style="background:var(--vacation-text)"></span><span>Отпуск</span></div>
-            <div class="legend-item"><span class="legend-dot" style="background:var(--conflict-text)"></span><span>Замена</span></div>
-            <div class="legend-item"><span class="legend-dot" style="background:var(--holiday-text)"></span><span>Праздник</span></div>
-          </div>
+            <div id="calendarWeekdays" class="calendar-grid"></div>
+            <div id="calendarDays" class="calendar-grid"></div>
+            <div class="calendar-legend">
+              <div class="legend-item"><span class="legend-dot" style="background:var(--vacation-text)"></span><span>Отпуск</span></div>
+              <div class="legend-item"><span class="legend-dot" style="background:var(--conflict-text)"></span><span>Замена</span></div>
+              <div class="legend-item"><span class="legend-dot" style="background:var(--holiday-text)"></span><span>Праздник</span></div>
+            </div>
           </div>
         </div>
       </div>
@@ -912,7 +908,6 @@
 
   <script>
     const PASSWORD = "2305";
-    const CORS_PROXY = "https://api.allorigins.win/raw?url=";
 
     const CSV = {
       watch: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_j9JH9OK3SyTfOF0dtATg3M-eBFtfW5Cv3jorD1fTU6VcIQTAPhlkExjG6bUAnT2tNAzMmtO1PRci/pub?gid=1954389003&single=true&output=csv",
@@ -930,7 +925,6 @@
       calendarYear: new Date().getFullYear(),
       calendarMonth: new Date().getMonth(),
       nowIntervalId: null,
-      loadErrors: [],
       collapsed: {
         watch: false,
         tours: false,
@@ -1426,6 +1420,42 @@
       el.innerHTML = chips.join("");
     }
 
+    function computeStats() {
+      const today = new Date();
+      const todayKey = dateKey(today);
+
+      const vacationNow = state.data.vacation.filter(row => {
+        const start = parseDate(row["начало"]);
+        const end = parseDate(row["конец"]);
+        if (!start || !end) return false;
+        const t = startOfDay(today).getTime();
+        return t >= startOfDay(start).getTime() && t <= startOfDay(end).getTime();
+      }).length;
+
+      const conflictsToday =
+        state.data.watch.filter(row => {
+          const d = parseDate(row["дата"]);
+          if (!d) return false;
+          return dateKey(d) === todayKey &&
+            (safe(row["статус"]).toLowerCase().includes("замена") ||
+             safe(row["статус"]).toLowerCase().includes("отпуск") ||
+             safe(row["замена"]));
+        }).length;
+
+      const holidayMap = getHolidayMap();
+
+      return {
+        watch: state.data.watch.length,
+        tours: state.data.tours.length,
+        schedule: state.data.schedule.length,
+        vacation: state.data.vacation.length,
+        vacationNow,
+        conflictsToday,
+        holidayToday: holidayMap[todayKey] || "",
+        selectedDate: state.selectedDate ? formatDateKey(state.selectedDate) : "Не выбрана"
+      };
+    }
+
     function renderNowCard() {
       const nowDateEl = document.getElementById("nowDate");
       const nowTimeEl = document.getElementById("nowTime");
@@ -1443,6 +1473,7 @@
       const year = now.getFullYear();
       const hh = String(now.getHours()).padStart(2, "0");
       const mm = String(now.getMinutes()).padStart(2, "0");
+      const ss = String(now.getSeconds()).padStart(2, "0");
 
       nowDateEl.textContent = `${day} ${month} ${year} г.`;
       nowTimeEl.textContent = `${hh}:${mm}`;
@@ -1467,20 +1498,129 @@
       }
     }
 
+    function renderStats() {
+      const el = document.getElementById("statsGrid");
+      if (!el) return;
+
+      const stats = computeStats();
+
+      el.innerHTML = `
+        <div class="panel stat">
+          <div class="stat-label">Вахта</div>
+          <div class="stat-value">${stats.watch}</div>
+          <div class="stat-sub">Рабочие дни</div>
+        </div>
+        <div class="panel stat">
+          <div class="stat-label">Экскурсии</div>
+          <div class="stat-value">${stats.tours}</div>
+          <div class="stat-sub">Ежедневные назначения</div>
+        </div>
+        <div class="panel stat">
+          <div class="stat-label">Сейчас в отпуске</div>
+          <div class="stat-value">${stats.vacationNow}</div>
+          <div class="stat-sub">Активные отпускные периоды</div>
+        </div>
+        <div class="panel stat">
+          <div class="stat-label">Выбранная дата</div>
+          <div class="stat-value" style="font-size:22px;">${stats.selectedDate}</div>
+          <div class="stat-sub">Оперативный срез по дню</div>
+        </div>
+      `;
+    }
+
+    function finalPerson(row) {
+      return safe(row["итог"]) || safe(row["замена"]) || safe(row["назначен"]);
+    }
+
+    function rowMonthValue(row) {
+      return safe(row["месяц"]);
+    }
+
+    function getMonthNamesRu() {
+      return [
+        "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
+        "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"
+      ];
+    }
+
+    function monthSelectHtml(sectionKey, selectedValue) {
+      const months = getMonthNamesRu();
+      return `
+        <select
+          class="month-select"
+          onchange="setMonthFilter('${sectionKey}', this.value)"
+          onclick="event.stopPropagation()"
+        >
+          <option value="all" ${selectedValue === "all" ? "selected" : ""}>Все месяцы</option>
+          ${months.map(m => `<option value="${m}" ${selectedValue === m ? "selected" : ""}>${m}</option>`).join("")}
+        </select>
+      `;
+    }
+
+    function renderRow({ avatarText, main, meta, badges = [], conflict = false, today = false }) {
+      return `
+        <div class="row ${conflict ? "conflict" : ""} ${today ? "today" : ""}">
+          <div class="avatar">${escapeHtml(getInitials(avatarText))}</div>
+          <div class="content">
+            <div class="main-line">${main}</div>
+            ${meta ? `<div class="meta">${meta}</div>` : ``}
+            ${badges.length ? `
+              <div class="badges">
+                ${badges.map(tag => {
+                  const cls =
+                    tag === "Конфликт" ? "conflict" :
+                    tag === "Отпуск" ? "vacation" :
+                    tag === "Праздник" ? "holiday" :
+                    tag === "ОК" ? "ok" :
+                    tag === "Сегодня" ? "today" :
+                    "warn";
+                  return `<span class="badge ${cls}">${escapeHtml(tag)}</span>`;
+                }).join("")}
+              </div>
+            ` : ``}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderSection(title, key, subtitle, rows, renderFn, withMonthFilter = false) {
+      const collapsed = state.collapsed[key];
+      const selectedMonth = state.monthFilter[key] || "all";
+
+      const filteredRows = withMonthFilter
+        ? rows.filter(row => {
+            if (selectedMonth === "all") return true;
+            return rowMonthValue(row).includes(selectedMonth);
+          })
+        : rows;
+
+      return `
+        <div class="panel card">
+          <div class="section-head" onclick="toggleSection('${key}')">
+            <div class="section-left">
+              <div>
+                <div class="section-title">${title}</div>
+                <div class="section-subtitle">${subtitle}</div>
+              </div>
+            </div>
+            <div class="section-meta">
+              ${withMonthFilter ? monthSelectHtml(key, selectedMonth) : ""}
+              <div class="counter">${filteredRows.length} записей</div>
+              <button class="collapse-btn" type="button" onclick="event.stopPropagation(); toggleSection('${key}')">
+                ${collapsed ? "Развернуть" : "Свернуть"}
+              </button>
+            </div>
+          </div>
+          <div class="rows ${collapsed ? "collapsed" : ""}">
+            ${filteredRows.length ? filteredRows.map(renderFn).join("") : `<div class="empty">Ничего не найдено</div>`}
+          </div>
+        </div>
+      `;
+    }
+
     function render() {
       const holidayMap = getHolidayMap();
       let html = "";
-
-      if (state.loadErrors && state.loadErrors.length) {
-        html += `
-          <div class="panel card">
-            <div class="error-box">
-              Не удалось загрузить: ${state.loadErrors.map(escapeHtml).join(" · ")}. 
-              Проверь, что ссылки открываются в режиме инкогнито.
-            </div>
-          </div>
-        `;
-      }
 
       const watchRows = state.data.watch.filter(row =>
         matchesSearch([row["дата"], row["день"], row["назначен"], row["замена"], row["итог"], row["статус"], row["комментарий"]]) &&
@@ -1666,6 +1806,7 @@
           true
         );
       }
+
       if (!html) {
         html = `
           <div class="panel card">
@@ -1679,38 +1820,12 @@
       renderSelectedDateInfo();
       renderCalendar();
       renderNowCard();
+      renderStats();
     }
 
-    function looksLikeHtml(text) {
-      return /<!doctype html|<html/i.test(text || "");
-    }
-
-    async function fetchText(url) {
-      const r = await fetch(url, { cache: "no-store" });
-      if (!r.ok) throw new Error(`HTTP ${r.status}`);
-      const text = await r.text();
-      return { text };
-    }
-
-    async function loadCsv(name, url) {
-      if (!url) return { name, ok:false, text:"", error:"нет ссылки" };
-      try {
-        const res = await fetchText(url);
-        if (looksLikeHtml(res.text)) throw new Error("html вместо csv");
-        return { name, ok:true, text: res.text };
-      } catch (err) {
-        if (CORS_PROXY) {
-          try {
-            const proxyUrl = CORS_PROXY + encodeURIComponent(url);
-            const res2 = await fetchText(proxyUrl);
-            if (looksLikeHtml(res2.text)) throw new Error("html вместо csv");
-            return { name, ok:true, text: res2.text };
-          } catch (err2) {
-            return { name, ok:false, text:"", error: err2?.message || "ошибка загрузки" };
-          }
-        }
-        return { name, ok:false, text:"", error: err?.message || "ошибка загрузки" };
-      }
+    function loadCsv(url) {
+      if (!url) return Promise.resolve("" );
+      return fetch(url).then(r => r.text());
     }
 
     async function load() {
@@ -1722,23 +1837,20 @@
         `;
 
         const [w, t, s, v, h, vi] = await Promise.all([
-          loadCsv("Вахта", CSV.watch),
-          loadCsv("Экскурсии", CSV.tours),
-          loadCsv("Расписание", CSV.schedule),
-          loadCsv("Отпуска", CSV.vacation),
-          loadCsv("Праздники", CSV.holidays),
-          loadCsv("Визиты", CSV.visits)
+          loadCsv(CSV.watch),
+          loadCsv(CSV.tours),
+          loadCsv(CSV.schedule),
+          loadCsv(CSV.vacation),
+          loadCsv(CSV.holidays),
+          loadCsv(CSV.visits)
         ]);
 
-        state.data.watch = parse(w.text);
-        state.data.tours = parse(t.text);
-        state.data.schedule = parse(s.text);
-        state.data.vacation = parse(v.text);
-        state.data.holidays = parse(h.text);
-        state.data.visits = parse(vi.text);
-        state.loadErrors = [w, t, s, v, h, vi]
-          .filter(item => !item.ok)
-          .map(item => `${item.name}`);
+        state.data.watch = parse(w);
+        state.data.tours = parse(t);
+        state.data.schedule = parse(s);
+        state.data.vacation = parse(v);
+        state.data.holidays = parse(h);
+        state.data.visits = parse(vi);
 
         renderNowCard();
         if (state.nowIntervalId) clearInterval(state.nowIntervalId);
@@ -1763,4 +1875,4 @@
 </html>
 ```
 
-Если после этого всё равно пусто, скажи — я помогу понять, какой именно лист отдает HTML вместо CSV (чаще всего это проблема доступа, даже если «опубликовано»).
+Если нужно, добавлю логотипы прямыми URL (если ты дашь ссылку на картинки в облаке).
