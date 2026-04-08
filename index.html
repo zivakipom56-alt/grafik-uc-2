@@ -1551,7 +1551,7 @@
 
       if (state.view === "all" || state.view === "visits") {
         const visitsRows = state.data.visits.filter(row =>
-          matchesSearch([row["дата"], row["фио"], row["комментарий"], row["тема"], row["гость"], row["посетитель"], row["организация"]]) &&
+          matchesSearch([row["дата"], row["компания"], row["гости"], row["тема"], row["комментарии"], row["комментарий"]]) &&
           isSelectedDateMatch(row["дата"])
         );
 
@@ -1562,7 +1562,7 @@
           visitsRows,
           row => {
             const date = safe(row["дата"]);
-            const person = safe(row["фио"]) || safe(row["гость"]) || safe(row["посетитель"]) || safe(row["организация"]) || safe(row["тема"]) || "";
+            const person = safe(row["компания"]) || safe(row["гости"]) || safe(row["тема"]) || "";
             const isToday = isTodayDate(date);
 
             const badges = [];
@@ -1572,9 +1572,9 @@
               avatarText: person || date,
               main: `${highlight(date)} — ${highlight(person)}`,
               meta: [
-                safe(row["комментарий"]),
+                safe(row["гости"]) ? `Гости: ${safe(row["гости"])}` : "",
                 safe(row["тема"]) ? `Тема: ${safe(row["тема"])}` : "",
-                safe(row["организация"]) ? `Орг.: ${safe(row["организация"])}` : ""
+                safe(row["комментарии"]) || safe(row["комментарий"])
               ].filter(Boolean).map(highlight).join(" · "),
               badges,
               conflict: false,
