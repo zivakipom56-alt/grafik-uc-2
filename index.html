@@ -312,6 +312,15 @@
       letter-spacing:1px;
     }
 
+    .now-time-wrap {
+  display:inline-block;
+  padding:10px 14px;
+  border-radius:16px;
+  background:linear-gradient(180deg,#f2fbfa 0%, #e8f5f4 100%);
+  border:1px solid #cfe4e2;
+  box-shadow:0 10px 18px rgba(15,23,42,0.06);
+  margin-bottom:10px;
+}   
     .now-meta {
       margin-top:14px;
       display:flex;
@@ -850,7 +859,7 @@
           <div class="panel now">
             <div class="now-label">Сейчас</div>
             <div id="nowDate" class="now-date">—</div>
-            <div id="nowTime" class="now-time">--:--</div>
+            <div class="now-time-wrap"><div id="nowTime" class="now-time">--:--</div></div>
             <div id="nowMeta" class="now-meta"></div>
           </div>
 
