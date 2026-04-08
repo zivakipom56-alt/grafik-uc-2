@@ -21,6 +21,9 @@
       --today-bg:#e8f1ff;
       --today-border:#9dbcf0;
 
+      --today-row-bg:#eef5ff;
+      --today-row-border:#b7cff6;
+
       --vacation-bg:#fff3e6;
       --vacation-border:#f3c88f;
       --vacation-text:#9a5b00;
@@ -564,6 +567,14 @@
       background:var(--conflict-bg);
     }
 
+    .row.today {
+      background:var(--today-row-bg);
+      border:1px solid var(--today-row-border);
+      border-radius:16px;
+      padding:15px;
+      margin:8px 0;
+    }
+
     .avatar {
       width:42px;
       height:42px;
@@ -641,6 +652,12 @@
     .badge.warn {
       background:var(--warn-bg);
       color:var(--warn-text);
+    }
+
+    .badge.today {
+      background:var(--brand-soft);
+      color:var(--brand);
+      border-color:#cfe2f0;
     }
 
     .empty {
@@ -759,6 +776,7 @@
           <div class="tab" onclick="setView('tours', this)">Экскурсии</div>
           <div class="tab" onclick="setView('schedule', this)">Расписание</div>
           <div class="tab" onclick="setView('vacation', this)">Отпуска</div>
+          <div class="tab" onclick="setView('visits', this)">Визиты</div>
         </div>
 
         <div class="search-wrap">
@@ -790,7 +808,8 @@
       tours: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_j9JH9OK3SyTfOF0dtATg3M-eBFtfW5Cv3jorD1fTU6VcIQTAPhlkExjG6bUAnT2tNAzMmtO1PRci/pub?gid=1910645083&single=true&output=csv",
       schedule: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_j9JH9OK3SyTfOF0dtATg3M-eBFtfW5Cv3jorD1fTU6VcIQTAPhlkExjG6bUAnT2tNAzMmtO1PRci/pub?gid=2107515437&single=true&output=csv",
       vacation: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_j9JH9OK3SyTfOF0dtATg3M-eBFtfW5Cv3jorD1fTU6VcIQTAPhlkExjG6bUAnT2tNAzMmtO1PRci/pub?gid=899395990&single=true&output=csv",
-      holidays: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_j9JH9OK3SyTfOF0dtATg3M-eBFtfW5Cv3jorD1fTU6VcIQTAPhlkExjG6bUAnT2tNAzMmtO1PRci/pub?gid=72554172&single=true&output=csv"
+      holidays: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_j9JH9OK3SyTfOF0dtATg3M-eBFtfW5Cv3jorD1fTU6VcIQTAPhlkExjG6bUAnT2tNAzMmtO1PRci/pub?gid=72554172&single=true&output=csv",
+      visits: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_j9JH9OK3SyTfOF0dtATg3M-eBFtfW5Cv3jorD1fTU6VcIQTAPhlkExjG6bUAnT2tNAzMmtO1PRci/pub?gid=933327664&single=true&output=csv"
     };
 
     let state = {
@@ -804,7 +823,8 @@
         watch: false,
         tours: false,
         schedule: false,
-        vacation: false
+        vacation: false,
+        visits: false
       },
       monthFilter: {
         watch: "all",
@@ -815,7 +835,8 @@
         tours: [],
         schedule: [],
         vacation: [],
-        holidays: []
+        holidays: [],
+        visits: []
       }
     };
 
@@ -1015,6 +1036,12 @@
       return dateKey(d) === state.selectedDate;
     }
 
+    function isTodayDate(textDate) {
+      const d = parseDate(textDate);
+      if (!d) return false;
+      return dateKey(d) === dateKey(new Date());
+    }
+
     function parsePeriod(periodText) {
       const match = safe(periodText).match(/(\d{2}\.\d{2}\.\d{4})\D+(\d{2}\.\d{2}\.\d{4})/);
       if (!match) return null;
@@ -1032,6 +1059,13 @@
       if (!selected) return false;
       const d = startOfDay(selected).getTime();
       return d >= startOfDay(period.start).getTime() && d <= startOfDay(period.end).getTime();
+    }
+
+    function isTodayInPeriod(periodText) {
+      const period = parsePeriod(periodText);
+      if (!period || !period.start || !period.end) return false;
+      const today = startOfDay(new Date()).getTime();
+      return today >= startOfDay(period.start).getTime() && today <= startOfDay(period.end).getTime();
     }
 
     function getHolidayMap() {
@@ -1301,9 +1335,9 @@
       `;
     }
 
-    function renderRow({ avatarText, main, meta, badges = [], conflict = false }) {
+    function renderRow({ avatarText, main, meta, badges = [], conflict = false, today = false }) {
       return `
-        <div class="row ${conflict ? "conflict" : ""}">
+        <div class="row ${conflict ? "conflict" : ""} ${today ? "today" : ""}">
           <div class="avatar">${escapeHtml(getInitials(avatarText))}</div>
           <div class="content">
             <div class="main-line">${main}</div>
@@ -1316,6 +1350,7 @@
                     tag === "Отпуск" ? "vacation" :
                     tag === "Праздник" ? "holiday" :
                     tag === "ОК" ? "ok" :
+                    tag === "Сегодня" ? "today" :
                     "warn";
                   return `<span class="badge ${cls}">${escapeHtml(tag)}</span>`;
                 }).join("")}
@@ -1404,11 +1439,13 @@
             const conflict = !!safe(row["замена"]) || status.toLowerCase().includes("замена") || status.toLowerCase().includes("отпуск");
             const dateObj = parseDate(date);
             const holiday = dateObj ? holidayMap[dateKey(dateObj)] : "";
+            const isToday = isTodayDate(date);
 
             const badges = [];
             if (status) badges.push(status === "ОК" ? "ОК" : "Замена");
             if (conflict) badges.push("Конфликт");
             if (holiday) badges.push("Праздник");
+            if (isToday) badges.push("Сегодня");
 
             return renderRow({
               avatarText: finalPerson(row),
@@ -1419,7 +1456,8 @@
                 safe(row["комментарий"])
               ].filter(Boolean).map(highlight).join(" · "),
               badges,
-              conflict
+              conflict,
+              today: isToday
             });
           },
           true
@@ -1438,11 +1476,13 @@
             const conflict = !!safe(row["замена"]) || status.toLowerCase().includes("замена") || status.toLowerCase().includes("отпуск");
             const dateObj = parseDate(date);
             const holiday = dateObj ? holidayMap[dateKey(dateObj)] : "";
+            const isToday = isTodayDate(date);
 
             const badges = [];
             if (status) badges.push(status === "ОК" ? "ОК" : "Замена");
             if (conflict) badges.push("Конфликт");
             if (holiday) badges.push("Праздник");
+            if (isToday) badges.push("Сегодня");
 
             return renderRow({
               avatarText: finalPerson(row),
@@ -1453,7 +1493,8 @@
                 safe(row["комментарий"])
               ].filter(Boolean).map(highlight).join(" · "),
               badges,
-              conflict
+              conflict,
+              today: isToday
             });
           },
           true
@@ -1469,10 +1510,12 @@
           row => {
             const status = safe(row["статус"]);
             const conflict = !!safe(row["замена"]) || status.toLowerCase().includes("замена") || status.toLowerCase().includes("отпуск");
+            const isToday = isTodayInPeriod(row["период"]);
 
             const badges = [];
             if (status) badges.push(status === "ОК" ? "ОК" : "Замена");
             if (conflict) badges.push("Конфликт");
+            if (isToday) badges.push("Сегодня");
 
             return renderRow({
               avatarText: finalPerson(row),
@@ -1483,7 +1526,8 @@
                 safe(row["комментарий"])
               ].filter(Boolean).map(highlight).join(" · "),
               badges,
-              conflict
+              conflict,
+              today: isToday
             });
           }
         );
@@ -1505,6 +1549,41 @@
         );
       }
 
+      if (state.view === "all" || state.view === "visits") {
+        const visitsRows = state.data.visits.filter(row =>
+          matchesSearch([row["дата"], row["фио"], row["комментарий"], row["тема"], row["гость"], row["посетитель"], row["организация"]]) &&
+          isSelectedDateMatch(row["дата"])
+        );
+
+        html += renderSection(
+          "Визиты",
+          "visits",
+          "Ручной ввод посещений и встреч",
+          visitsRows,
+          row => {
+            const date = safe(row["дата"]);
+            const person = safe(row["фио"]) || safe(row["гость"]) || safe(row["посетитель"]) || safe(row["организация"]) || safe(row["тема"]) || "";
+            const isToday = isTodayDate(date);
+
+            const badges = [];
+            if (isToday) badges.push("Сегодня");
+
+            return renderRow({
+              avatarText: person || date,
+              main: `${highlight(date)} — ${highlight(person)}`,
+              meta: [
+                safe(row["комментарий"]),
+                safe(row["тема"]) ? `Тема: ${safe(row["тема"])}` : "",
+                safe(row["организация"]) ? `Орг.: ${safe(row["организация"])}` : ""
+              ].filter(Boolean).map(highlight).join(" · "),
+              badges,
+              conflict: false,
+              today: isToday
+            });
+          }
+        );
+      }
+
       if (!html) {
         html = `
           <div class="panel card">
@@ -1520,6 +1599,11 @@
       renderStats();
     }
 
+    function loadCsv(url) {
+      if (!url) return Promise.resolve("");
+      return fetch(url).then(r => r.text());
+    }
+
     async function load() {
       try {
         document.getElementById("content").innerHTML = `
@@ -1528,12 +1612,13 @@
           </div>
         `;
 
-        const [w, t, s, v, h] = await Promise.all([
-          fetch(CSV.watch).then(r => r.text()),
-          fetch(CSV.tours).then(r => r.text()),
-          fetch(CSV.schedule).then(r => r.text()),
-          fetch(CSV.vacation).then(r => r.text()),
-          fetch(CSV.holidays).then(r => r.text())
+        const [w, t, s, v, h, vi] = await Promise.all([
+          loadCsv(CSV.watch),
+          loadCsv(CSV.tours),
+          loadCsv(CSV.schedule),
+          loadCsv(CSV.vacation),
+          loadCsv(CSV.holidays),
+          loadCsv(CSV.visits)
         ]);
 
         state.data.watch = parse(w);
@@ -1541,6 +1626,7 @@
         state.data.schedule = parse(s);
         state.data.vacation = parse(v);
         state.data.holidays = parse(h);
+        state.data.visits = parse(vi);
 
         renderNowCard();
         if (state.nowIntervalId) clearInterval(state.nowIntervalId);
