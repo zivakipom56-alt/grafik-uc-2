@@ -91,7 +91,7 @@
       font-size:28px;
     }
 
-    input {
+    input, select {
       width:100%;
       border:1px solid var(--line-strong);
       background:#fff;
@@ -102,7 +102,7 @@
       transition:.15s ease;
     }
 
-    input:focus {
+    input:focus, select:focus {
       border-color:#98b8d2;
       box-shadow:0 0 0 4px rgba(31,95,139,0.08);
     }
@@ -529,6 +529,15 @@
       width:auto;
     }
 
+    .month-select {
+      width:auto;
+      min-width:150px;
+      padding:8px 10px;
+      border-radius:10px;
+      font-size:12px;
+      font-weight:700;
+    }
+
     .rows {
       transition: all .2s ease;
     }
@@ -683,6 +692,8 @@
       .now-time { font-size:46px; }
       .toolbar { align-items:stretch; }
       .search-wrap { max-width:none; width:100%; }
+      .section-meta { width:100%; }
+      .month-select { width:100%; }
     }
   </style>
 </head>
@@ -795,6 +806,10 @@
         schedule: false,
         vacation: false
       },
+      monthFilter: {
+        watch: "all",
+        tours: "all"
+      },
       data: {
         watch: [],
         tours: [],
@@ -840,6 +855,11 @@
 
     function toggleSection(key) {
       state.collapsed[key] = !state.collapsed[key];
+      render();
+    }
+
+    function setMonthFilter(section, month) {
+      state.monthFilter[section] = month;
       render();
     }
 
@@ -1009,6 +1029,7 @@
       const period = parsePeriod(periodText);
       if (!period || !period.start || !period.end) return false;
       const selected = parseDate(state.selectedDate);
+      if (!selected) return false;
       const d = startOfDay(selected).getTime();
       return d >= startOfDay(period.start).getTime() && d <= startOfDay(period.end).getTime();
     }
@@ -1043,6 +1064,7 @@
 
         let d = startOfDay(start);
         const finish = startOfDay(end);
+
         while (d <= finish) {
           ensure(dateKey(d)).vacation = true;
           d = new Date(d);
@@ -1254,6 +1276,31 @@
       return safe(row["итог"]) || safe(row["замена"]) || safe(row["назначен"]);
     }
 
+    function rowMonthValue(row) {
+      return safe(row["месяц"]);
+    }
+
+    function getMonthNamesRu() {
+      return [
+        "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
+        "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"
+      ];
+    }
+
+    function monthSelectHtml(sectionKey, selectedValue) {
+      const months = getMonthNamesRu();
+      return `
+        <select
+          class="month-select"
+          onchange="setMonthFilter('${sectionKey}', this.value)"
+          onclick="event.stopPropagation()"
+        >
+          <option value="all" ${selectedValue === "all" ? "selected" : ""}>Все месяцы</option>
+          ${months.map(m => `<option value="${m}" ${selectedValue === m ? "selected" : ""}>${m}</option>`).join("")}
+        </select>
+      `;
+    }
+
     function renderRow({ avatarText, main, meta, badges = [], conflict = false }) {
       return `
         <div class="row ${conflict ? "conflict" : ""}">
@@ -1279,8 +1326,16 @@
       `;
     }
 
-    function renderSection(title, key, subtitle, rows, renderFn) {
+    function renderSection(title, key, subtitle, rows, renderFn, withMonthFilter = false) {
       const collapsed = state.collapsed[key];
+      const selectedMonth = state.monthFilter[key] || "all";
+
+      const filteredRows = withMonthFilter
+        ? rows.filter(row => {
+            if (selectedMonth === "all") return true;
+            return rowMonthValue(row).includes(selectedMonth);
+          })
+        : rows;
 
       return `
         <div class="panel card">
@@ -1292,12 +1347,15 @@
               </div>
             </div>
             <div class="section-meta">
-              <div class="counter">${rows.length} записей</div>
-              <button class="collapse-btn" type="button">${collapsed ? "Развернуть" : "Свернуть"}</button>
+              ${withMonthFilter ? monthSelectHtml(key, selectedMonth) : ""}
+              <div class="counter">${filteredRows.length} записей</div>
+              <button class="collapse-btn" type="button" onclick="event.stopPropagation(); toggleSection('${key}')">
+                ${collapsed ? "Развернуть" : "Свернуть"}
+              </button>
             </div>
           </div>
           <div class="rows ${collapsed ? "collapsed" : ""}">
-            ${rows.length ? rows.map(renderFn).join("") : `<div class="empty">Ничего не найдено</div>`}
+            ${filteredRows.length ? filteredRows.map(renderFn).join("") : `<div class="empty">Ничего не найдено</div>`}
           </div>
         </div>
       `;
@@ -1344,7 +1402,8 @@
             const date = safe(row["дата"]);
             const status = safe(row["статус"]);
             const conflict = !!safe(row["замена"]) || status.toLowerCase().includes("замена") || status.toLowerCase().includes("отпуск");
-            const holiday = holidayMap[dateKey(parseDate(date) || new Date())];
+            const dateObj = parseDate(date);
+            const holiday = dateObj ? holidayMap[dateKey(dateObj)] : "";
 
             const badges = [];
             if (status) badges.push(status === "ОК" ? "ОК" : "Замена");
@@ -1362,7 +1421,8 @@
               badges,
               conflict
             });
-          }
+          },
+          true
         );
       }
 
@@ -1376,7 +1436,8 @@
             const date = safe(row["дата"]);
             const status = safe(row["статус"]);
             const conflict = !!safe(row["замена"]) || status.toLowerCase().includes("замена") || status.toLowerCase().includes("отпуск");
-            const holiday = holidayMap[dateKey(parseDate(date) || new Date())];
+            const dateObj = parseDate(date);
+            const holiday = dateObj ? holidayMap[dateKey(dateObj)] : "";
 
             const badges = [];
             if (status) badges.push(status === "ОК" ? "ОК" : "Замена");
@@ -1394,7 +1455,8 @@
               badges,
               conflict
             });
-          }
+          },
+          true
         );
       }
 
