@@ -270,7 +270,9 @@
     }
 
     .calendar {
-      padding:16px;
+      padding:18px;
+      background:linear-gradient(180deg,#f7f9fc 0%, #eef2f6 100%);
+      border-color:#e1e7ef;
     }
 
     .calendar-head {
@@ -293,36 +295,38 @@
     .calendar-nav button {
       padding:7px 10px;
       min-width:34px;
-      border-radius:10px;
-      background:#eef3f7;
+      border-radius:12px;
+      background:#e7edf3;
       color:var(--text);
-      border:1px solid var(--line);
+      border:1px solid #d5dee9;
     }
 
     .calendar-grid {
       display:grid;
       grid-template-columns:repeat(7,1fr);
-      gap:6px;
+      gap:8px;
     }
 
     .calendar-weekday {
       text-align:center;
       font-size:11px;
       font-weight:700;
-      color:var(--muted);
-      padding-bottom:4px;
+      color:#2a3b52;
+      padding-bottom:6px;
     }
 
     .calendar-day {
-      min-height:40px;
+      min-height:44px;
       border:1px solid transparent;
-      border-radius:12px;
-      background:var(--card-2);
+      border-radius:14px;
+      background:#eef2f6;
+      color:var(--text);
       display:flex;
       flex-direction:column;
       align-items:center;
       justify-content:center;
       font-size:13px;
+      font-weight:600;
       cursor:pointer;
       transition:.15s ease;
     }
@@ -343,7 +347,7 @@
     }
 
     .calendar-day.selected {
-      box-shadow:inset 0 0 0 2px var(--brand);
+      box-shadow:inset 0 0 0 2px #7aa5e6;
     }
 
     .calendar-day.holiday {
@@ -386,38 +390,6 @@
       width:8px;
       height:8px;
       border-radius:50%;
-    }
-
-    .stats {
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      gap:12px;
-      margin-bottom:16px;
-    }
-
-    .stat {
-      padding:16px;
-    }
-
-    .stat-label {
-      font-size:12px;
-      color:var(--muted);
-      text-transform:uppercase;
-      letter-spacing:.7px;
-      margin-bottom:8px;
-      font-weight:700;
-    }
-
-    .stat-value {
-      font-size:30px;
-      line-height:1;
-      font-weight:800;
-      margin-bottom:6px;
-    }
-
-    .stat-sub {
-      font-size:13px;
-      color:var(--muted);
     }
 
     .toolbar {
@@ -767,9 +739,6 @@
       .now {
         grid-column:1 / -1;
       }
-      .stats {
-        grid-template-columns:repeat(2,1fr);
-      }
     }
 
     @media (max-width:900px) {
@@ -781,7 +750,6 @@
     @media (max-width:700px) {
       .container { padding:14px; }
       .hero h1 { font-size:34px; }
-      .stats { grid-template-columns:1fr; }
       .now-time { font-size:46px; }
       .toolbar { align-items:stretch; }
       .search-wrap { max-width:none; width:100%; }
@@ -817,14 +785,12 @@
           </div>
           <div id="dateInfo" class="hero-date-info"></div>
         </div>
-
         <div class="panel now">
           <div class="now-label">Сейчас</div>
           <div id="nowDate" class="now-date">—</div>
           <div id="nowTime" class="now-time">--:--</div>
           <div id="nowMeta" class="now-meta"></div>
         </div>
-
         <div class="panel calendar">
           <div class="calendar-head">
             <div id="calendarTitle" class="calendar-title">Календарь</div>
@@ -844,8 +810,6 @@
       </div>
 
       <div id="todaySummary" class="panel today-summary"></div>
-
-      <div id="statsGrid" class="stats"></div>
 
       <div class="toolbar">
         <div class="tabs">
@@ -1445,7 +1409,6 @@
       const year = now.getFullYear();
       const hh = String(now.getHours()).padStart(2, "0");
       const mm = String(now.getMinutes()).padStart(2, "0");
-      const ss = String(now.getSeconds()).padStart(2, "0");
 
       nowDateEl.textContent = `${day} ${month} ${year} г.`;
       nowTimeEl.textContent = `${hh}:${mm}`;
@@ -1473,9 +1436,7 @@
     function renderStats() {
       const el = document.getElementById("statsGrid");
       if (!el) return;
-
       const stats = computeStats();
-
       el.innerHTML = `
         <div class="panel stat">
           <div class="stat-label">Вахта</div>
@@ -1743,7 +1704,6 @@
         );
       }
 
-
       if (state.view === "all" || state.view === "visits") {
         const visitsRows = state.data.visits.filter(row =>
           matchesSearch([row["дата"], row["компания"], row["гости"], row["тема"], row["комментарии"], row["комментарий"]]) &&
@@ -1779,6 +1739,7 @@
           true
         );
       }
+
       if (!html) {
         html = `
           <div class="panel card">
@@ -1794,7 +1755,6 @@
       renderNowCard();
       renderStats();
     }
-
 
     function loadCsv(url) {
       if (!url) return Promise.resolve("" );
