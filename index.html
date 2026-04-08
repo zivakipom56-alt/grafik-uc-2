@@ -83,6 +83,16 @@
       text-align:center;
     }
 
+    .login-box.logo-fallback::before {
+      content:"СИБУР";
+      display:block;
+      font-size:22px;
+      font-weight:800;
+      color:var(--brand);
+      margin-bottom:12px;
+      letter-spacing:0.5px;
+    }
+
     .login-logo {
       width:240px;
       max-width:100%;
@@ -201,6 +211,16 @@
       max-width:100%;
       height:auto;
       margin-bottom:8px;
+    }
+
+    .logo-fallback-inner::before {
+      content:"СИБУРИНТЕХ";
+      display:block;
+      font-size:16px;
+      font-weight:800;
+      color:var(--brand);
+      margin-bottom:6px;
+      letter-spacing:0.4px;
     }
 
     .hero-date-info {
@@ -432,38 +452,6 @@
       width:8px;
       height:8px;
       border-radius:50%;
-    }
-
-    .stats {
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      gap:12px;
-      margin-bottom:16px;
-    }
-
-    .stat {
-      padding:16px;
-    }
-
-    .stat-label {
-      font-size:12px;
-      color:var(--muted);
-      text-transform:uppercase;
-      letter-spacing:.7px;
-      margin-bottom:8px;
-      font-weight:700;
-    }
-
-    .stat-value {
-      font-size:30px;
-      line-height:1;
-      font-weight:800;
-      margin-bottom:6px;
-    }
-
-    .stat-sub {
-      font-size:13px;
-      color:var(--muted);
     }
 
     .toolbar {
@@ -835,7 +823,7 @@
 <body>
   <div id="login" class="login">
     <div class="login-box">
-      <img class="login-logo" src="sibur-logo.png" alt="СИБУР" />
+      <img class="login-logo" src="sibur-logo.png" alt="СИБУР" onerror="this.style.display='none'; this.parentElement.classList.add('logo-fallback')" />
       <h2>Графики</h2>
       <input id="pass" type="password" placeholder="Пароль" />
       <button onclick="login()">Войти</button>
@@ -851,7 +839,7 @@
           <div class="panel hero">
           <div class="hero-top">
             <div>
-              <img class="logo" src="sibur-intech.png" alt="СИБУРИНТЕХ" />
+              <img class="logo" src="sibur-intech.png" alt="СИБУРИНТЕХ" onerror="this.style.display='none'; this.parentElement.classList.add('logo-fallback-inner')" />
               <h1>Графики</h1>
               <p class="hero-sub">Единая страница дежурств, расписания и отпусков</p>
             </div>
@@ -938,6 +926,7 @@
       calendarYear: new Date().getFullYear(),
       calendarMonth: new Date().getMonth(),
       nowIntervalId: null,
+      loadErrors: [],
       collapsed: {
         watch: false,
         tours: false,
@@ -1118,7 +1107,7 @@
         return new Date(y, m - 1, d);
       }
 
-      if (/^\d{4}-\d{2}\.\d{2}$/.test(v)) {
+      if (/^\d{4}-\d{2}-\d{2}$/.test(v)) {
         const [y, m, d] = v.split("-").map(Number);
         return new Date(y, m - 1, d);
       }
@@ -1478,6 +1467,16 @@
       const holidayMap = getHolidayMap();
       let html = "";
 
+      if (state.loadErrors && state.loadErrors.length) {
+        html += `
+          <div class="panel card">
+            <div class="error-box">
+              Не удалось загрузить: ${state.loadErrors.map(escapeHtml).join(" · ")}
+            </div>
+          </div>
+        `;
+      }
+
       const watchRows = state.data.watch.filter(row =>
         matchesSearch([row["дата"], row["день"], row["назначен"], row["замена"], row["итог"], row["статус"], row["комментарий"]]) &&
         isSelectedDateMatch(row["дата"])
@@ -1677,9 +1676,15 @@
       renderNowCard();
     }
 
-    function loadCsv(url) {
-      if (!url) return Promise.resolve("");
-      return fetch(url).then(r => r.text());
+    function loadCsv(name, url) {
+      if (!url) return Promise.resolve({ name, ok:false, text:"", error:"нет ссылки" });
+      return fetch(url, { cache: "no-store" })
+        .then(r => {
+          if (!r.ok) throw new Error(`HTTP ${r.status}`);
+          return r.text();
+        })
+        .then(text => ({ name, ok:true, text }))
+        .catch(err => ({ name, ok:false, text:"", error: err?.message || "ошибка загрузки" }));
     }
 
     async function load() {
@@ -1691,20 +1696,23 @@
         `;
 
         const [w, t, s, v, h, vi] = await Promise.all([
-          loadCsv(CSV.watch),
-          loadCsv(CSV.tours),
-          loadCsv(CSV.schedule),
-          loadCsv(CSV.vacation),
-          loadCsv(CSV.holidays),
-          loadCsv(CSV.visits)
+          loadCsv("Вахта", CSV.watch),
+          loadCsv("Экскурсии", CSV.tours),
+          loadCsv("Расписание", CSV.schedule),
+          loadCsv("Отпуска", CSV.vacation),
+          loadCsv("Праздники", CSV.holidays),
+          loadCsv("Визиты", CSV.visits)
         ]);
 
-        state.data.watch = parse(w);
-        state.data.tours = parse(t);
-        state.data.schedule = parse(s);
-        state.data.vacation = parse(v);
-        state.data.holidays = parse(h);
-        state.data.visits = parse(vi);
+        state.data.watch = parse(w.text);
+        state.data.tours = parse(t.text);
+        state.data.schedule = parse(s.text);
+        state.data.vacation = parse(v.text);
+        state.data.holidays = parse(h.text);
+        state.data.visits = parse(vi.text);
+        state.loadErrors = [w, t, s, v, h, vi]
+          .filter(item => !item.ok)
+          .map(item => `${item.name}`);
 
         renderNowCard();
         if (state.nowIntervalId) clearInterval(state.nowIntervalId);
