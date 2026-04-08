@@ -1,3 +1,6 @@
+Сделал: теперь три блока объединены в один общий «контейнер» с общей подложкой, рамкой и тенью — выглядит как единый модуль. Внутри элементы выглядят аккуратно и связно. Ниже полный файл:
+
+```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -134,19 +137,34 @@
     }
 
     .header-panel {
-      padding:16px;
+      padding:18px;
       margin-bottom:16px;
+      background:linear-gradient(180deg,#f7f9fc 0%, #eef2f6 100%);
+      border:1px solid #dfe6ef;
+      border-radius:var(--radius-xl);
+      box-shadow:var(--shadow);
     }
 
     .header-grid {
       display:grid;
       grid-template-columns: 1.2fr 260px 320px;
-      gap:16px;
+      gap:12px;
     }
 
     .header-panel .panel {
       box-shadow:none;
       border-radius:18px;
+    }
+
+    .header-panel .hero {
+      background:transparent;
+      border:none;
+      padding:12px 8px 8px;
+    }
+
+    .header-panel .calendar {
+      background:#f1f4f8;
+      border:1px solid #dde5ef;
     }
 
     .panel {
@@ -785,44 +803,45 @@
       <div class="panel header-panel">
         <div class="header-grid">
           <div class="panel hero">
-          <div class="hero-top">
-            <div>
-              <h1>Графики</h1>
-              <p class="hero-sub">Единая страница дежурств, расписания и отпусков</p>
+            <div class="hero-top">
+              <div>
+                <h1>Графики</h1>
+                <p class="hero-sub">Единая страница дежурств, расписания и отпусков</p>
+              </div>
+              <div>
+                <button onclick="load()" style="width:auto;">Обновить</button>
+              </div>
             </div>
-            <div>
-              <button onclick="load()" style="width:auto;">Обновить</button>
-            </div>
+            <div id="dateInfo" class="hero-date-info"></div>
           </div>
-          <div id="dateInfo" class="hero-date-info"></div>
-        </div>
+
           <div class="panel now">
-          <div class="now-label">Сейчас</div>
-          <div id="nowDate" class="now-date">—</div>
-          <div id="nowTime" class="now-time">--:--</div>
-          <div id="nowMeta" class="now-meta"></div>
-        </div>
+            <div class="now-label">Сейчас</div>
+            <div id="nowDate" class="now-date">—</div>
+            <div id="nowTime" class="now-time">--:--</div>
+            <div id="nowMeta" class="now-meta"></div>
+          </div>
+
           <div class="panel calendar">
-          <div class="calendar-head">
-            <div id="calendarTitle" class="calendar-title">Календарь</div>
-            <div class="calendar-nav">
-              <button type="button" onclick="changeCalendarMonth(-1)">‹</button>
-              <button type="button" onclick="changeCalendarMonth(1)">›</button>
+            <div class="calendar-head">
+              <div id="calendarTitle" class="calendar-title">Календарь</div>
+              <div class="calendar-nav">
+                <button type="button" onclick="changeCalendarMonth(-1)">‹</button>
+                <button type="button" onclick="changeCalendarMonth(1)">›</button>
+              </div>
             </div>
-          </div>
-          <div id="calendarWeekdays" class="calendar-grid"></div>
-          <div id="calendarDays" class="calendar-grid"></div>
-          <div class="calendar-legend">
-            <div class="legend-item"><span class="legend-dot" style="background:var(--vacation-text)"></span><span>Отпуск</span></div>
-            <div class="legend-item"><span class="legend-dot" style="background:var(--conflict-text)"></span><span>Замена</span></div>
-            <div class="legend-item"><span class="legend-dot" style="background:var(--holiday-text)"></span><span>Праздник</span></div>
-          </div>
+            <div id="calendarWeekdays" class="calendar-grid"></div>
+            <div id="calendarDays" class="calendar-grid"></div>
+            <div class="calendar-legend">
+              <div class="legend-item"><span class="legend-dot" style="background:var(--vacation-text)"></span><span>Отпуск</span></div>
+              <div class="legend-item"><span class="legend-dot" style="background:var(--conflict-text)"></span><span>Замена</span></div>
+              <div class="legend-item"><span class="legend-dot" style="background:var(--holiday-text)"></span><span>Праздник</span></div>
+            </div>
           </div>
         </div>
       </div>
 
       <div id="todaySummary" class="panel today-summary"></div>
-
 
       <div class="toolbar">
         <div class="tabs">
@@ -1823,3 +1842,5 @@
 </body>
 </html>
 ```
+
+Если хочешь более «склеенный» эффект (без внутренних рамок и разделители линиями), скажи — сделаю следующую версию.
