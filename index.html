@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -1449,14 +1450,24 @@
       nowDateEl.textContent = `${day} ${month} ${year} г.`;
       nowTimeEl.textContent = `${hh}:${mm}`;
 
-      const stats = computeStats();
-      const pills = [];
-      pills.push(`<span class="now-pill">В отпуске: ${stats.vacationNow}</span>`);
-      pills.push(`<span class="now-pill">Конфликты: ${stats.conflictsToday}</span>`);
-      if (stats.holidayToday) pills.push(`<span class="now-pill">${escapeHtml(stats.holidayToday)}</span>`);
-      pills.push(`<span class="now-pill">${hh}:${mm}:${ss}</span>`);
+      const todayStart = startOfDay(now).getTime();
+      const upcoming = state.data.holidays
+        .map(row => {
+          const d = parseDate(row["дата"]);
+          if (!d) return null;
+          const ts = startOfDay(d).getTime();
+          if (ts < todayStart) return null;
+          return { date: d, name: row["название"] || "Праздник" };
+        })
+        .filter(Boolean)
+        .sort((a, b) => a.date - b.date)[0];
 
-      nowMetaEl.innerHTML = pills.join("");
+      if (upcoming) {
+        const holidayDate = formatDateKey(dateKey(upcoming.date));
+        nowMetaEl.innerHTML = `<span class="now-pill">Ближайший праздник: ${escapeHtml(upcoming.name)} · ${holidayDate}</span>`;
+      } else {
+        nowMetaEl.innerHTML = `<span class="now-pill">Ближайший праздник: —</span>`;
+      }
     }
 
     function renderStats() {
@@ -1835,3 +1846,4 @@
   </script>
 </body>
 </html>
+```
