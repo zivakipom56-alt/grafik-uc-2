@@ -1,3 +1,6 @@
+Готово.  
+Сделал календарь в 2 раза шире, перевёл палитру и фон в цвета СИБУР, и добавил логотип «СИБУРИНТЕХ» в шапку. Ниже полный файл:
+
 ```html
 <!DOCTYPE html>
 <html lang="ru">
@@ -11,41 +14,41 @@
   <title>Графики учебного центра 2.0</title>
   <style>
     :root {
-      --bg:#f2f5f8;
-      --bg-soft:#f7f9fb;
+      --bg:#e6f4f2;
+      --bg-soft:#f2fbfa;
       --card:#ffffff;
-      --card-2:#f4f7fb;
-      --text:#0b1a2b;
-      --muted:#5b6c82;
-      --line:#dbe3ec;
-      --line-strong:#c8d6e5;
+      --card-2:#eef9f8;
+      --text:#043b3a;
+      --muted:#4f6f6e;
+      --line:#cfe4e2;
+      --line-strong:#b7d6d3;
 
-      --brand:#0b2b5b;
-      --brand-soft:#e6eef9;
+      --brand:#008d8a;
+      --brand-soft:#d9f4f2;
 
-      --today-bg:#e8f1ff;
-      --today-border:#9dbcf0;
+      --today-bg:#d9f4f2;
+      --today-border:#8fdad4;
 
-      --today-row-bg:#eef5ff;
-      --today-row-border:#b7cff6;
+      --today-row-bg:#e6f7f6;
+      --today-row-border:#9fded8;
 
-      --vacation-bg:#fff3e6;
-      --vacation-border:#f3c88f;
-      --vacation-text:#9a5b00;
+      --vacation-bg:#e9f8f7;
+      --vacation-border:#bfe7e4;
+      --vacation-text:#007c78;
 
-      --conflict-bg:#fdecec;
-      --conflict-border:#efb0b0;
-      --conflict-text:#a12626;
+      --conflict-bg:#e1f1f0;
+      --conflict-border:#a9d7d4;
+      --conflict-text:#0b5b57;
 
-      --holiday-bg:#e8f7ee;
-      --holiday-border:#a9d8bc;
-      --holiday-text:#1f7a45;
+      --holiday-bg:#eefbf9;
+      --holiday-border:#bfe8e5;
+      --holiday-text:#008d8a;
 
-      --ok-bg:#edf8f1;
-      --ok-text:#1f7a45;
+      --ok-bg:#e7f8f6;
+      --ok-text:#0b5b57;
 
-      --warn-bg:#fff4e8;
-      --warn-text:#9a5b00;
+      --warn-bg:#e8f7f6;
+      --warn-text:#0b5b57;
 
       --shadow:0 18px 40px rgba(15,23,42,0.08);
       --radius-xl:24px;
@@ -61,7 +64,7 @@
       padding:0;
       font-family:"Manrope", Arial, sans-serif;
       color:var(--text);
-      background:linear-gradient(180deg,#edf2f6 0%, #e6ebf1 100%);
+      background:linear-gradient(180deg,#e9f7f6 0%, #e1f1f0 100%);
     }
 
     .hidden { display:none !important; }
@@ -111,8 +114,8 @@
     }
 
     input:focus, select:focus {
-      border-color:#98b8d2;
-      box-shadow:0 0 0 4px rgba(31,95,139,0.08);
+      border-color:#6fc9c4;
+      box-shadow:0 0 0 4px rgba(0,141,138,0.12);
     }
 
     button {
@@ -137,15 +140,15 @@
     .header-panel {
       padding:18px;
       margin-bottom:16px;
-      background:linear-gradient(180deg,#f7f9fc 0%, #eef2f6 100%);
-      border:1px solid #dfe6ef;
+      background:linear-gradient(180deg,#f2fbfa 0%, #e7f4f3 100%);
+      border:1px solid #cfe4e2;
       border-radius:var(--radius-xl);
       box-shadow:var(--shadow);
     }
 
     .header-grid {
       display:grid;
-      grid-template-columns: 1.2fr 260px 320px;
+      grid-template-columns: 1.05fr 260px 640px;
       gap:12px;
     }
 
@@ -161,8 +164,8 @@
     }
 
     .header-panel .calendar {
-      background:#f1f4f8;
-      border:1px solid #dde5ef;
+      background:#eef7f6;
+      border:1px solid #cfe4e2;
     }
 
     .panel {
@@ -174,8 +177,8 @@
 
     .hero {
       padding:20px;
-      background:#f7f9fb;
-      border:1px solid #e0e7ef;
+      background:#f2fbfa;
+      border:1px solid #d9ecea;
     }
 
     .hero-top {
@@ -196,6 +199,25 @@
       margin:10px 0 0;
       color:var(--muted);
       font-size:15px;
+    }
+
+    .logo {
+      font-size:18px;
+      font-weight:800;
+      letter-spacing:1px;
+      color:var(--brand);
+      margin-bottom:6px;
+      text-transform:uppercase;
+    }
+
+    .logo span {
+      display:inline-block;
+      margin-left:6px;
+      font-size:12px;
+      font-weight:700;
+      letter-spacing:2px;
+      color:#0a6f6b;
+      transform:translateY(-2px);
     }
 
     .hero-date-info {
@@ -251,7 +273,7 @@
 
     .now {
       padding:18px;
-      background:linear-gradient(180deg,#2d516d 0%, #22465f 100%);
+      background:linear-gradient(180deg,#0f7e7a 0%, #0b5f5c 100%);
       color:#fff;
       border:1px solid rgba(255,255,255,0.12);
     }
@@ -297,8 +319,8 @@
 
     .calendar {
       padding:18px;
-      background:linear-gradient(180deg,#f7f9fc 0%, #eef2f6 100%);
-      border:1px solid #e1e7ef;
+      background:linear-gradient(180deg,#f2fbfa 0%, #e8f5f4 100%);
+      border:1px solid #cfe4e2;
     }
 
     .calendar-head {
@@ -322,9 +344,9 @@
       padding:7px 10px;
       min-width:34px;
       border-radius:12px;
-      background:#e7edf3;
+      background:#e0f1f0;
       color:var(--text);
-      border:1px solid #d5dee9;
+      border:1px solid #c3e2df;
     }
 
     .calendar-grid {
@@ -337,7 +359,7 @@
       text-align:center;
       font-size:11px;
       font-weight:700;
-      color:#2a3b52;
+      color:#2a4a48;
       padding-bottom:6px;
     }
 
@@ -345,7 +367,7 @@
       min-height:44px;
       border:1px solid transparent;
       border-radius:14px;
-      background:#eef2f6;
+      background:#eef7f6;
       color:var(--text);
       display:flex;
       flex-direction:column;
@@ -358,7 +380,7 @@
     }
 
     .calendar-day:hover {
-      border-color:#bfd1df;
+      border-color:#9fded8;
     }
 
     .calendar-day.empty {
@@ -373,7 +395,7 @@
     }
 
     .calendar-day.selected {
-      box-shadow:inset 0 0 0 2px #7aa5e6;
+      box-shadow:inset 0 0 0 2px #39b7b0;
     }
 
     .calendar-day.holiday {
@@ -760,7 +782,7 @@
 
     @media (max-width:1200px) {
       .header-grid {
-        grid-template-columns:1fr 320px;
+        grid-template-columns:1fr;
       }
       .header-grid .now {
         grid-column:1 / -1;
@@ -801,40 +823,39 @@
       <div class="panel header-panel">
         <div class="header-grid">
           <div class="panel hero">
-            <div class="hero-top">
-              <div>
-                <h1>Графики</h1>
-                <p class="hero-sub">Единая страница дежурств, расписания и отпусков</p>
-              </div>
-              <div>
-                <button onclick="load()" style="width:auto;">Обновить</button>
-              </div>
+          <div class="hero-top">
+            <div>
+              <div class="logo">СИБУР<span>ИНТЕХ</span></div>
+              <h1>Графики</h1>
+              <p class="hero-sub">Единая страница дежурств, расписания и отпусков</p>
             </div>
-            <div id="dateInfo" class="hero-date-info"></div>
+            <div>
+              <button onclick="load()" style="width:auto;">Обновить</button>
+            </div>
           </div>
-
+          <div id="dateInfo" class="hero-date-info"></div>
+        </div>
           <div class="panel now">
-            <div class="now-label">Сейчас</div>
-            <div id="nowDate" class="now-date">—</div>
-            <div id="nowTime" class="now-time">--:--</div>
-            <div id="nowMeta" class="now-meta"></div>
-          </div>
-
+          <div class="now-label">Сейчас</div>
+          <div id="nowDate" class="now-date">—</div>
+          <div id="nowTime" class="now-time">--:--</div>
+          <div id="nowMeta" class="now-meta"></div>
+        </div>
           <div class="panel calendar">
-            <div class="calendar-head">
-              <div id="calendarTitle" class="calendar-title">Календарь</div>
-              <div class="calendar-nav">
-                <button type="button" onclick="changeCalendarMonth(-1)">‹</button>
-                <button type="button" onclick="changeCalendarMonth(1)">›</button>
-              </div>
+          <div class="calendar-head">
+            <div id="calendarTitle" class="calendar-title">Календарь</div>
+            <div class="calendar-nav">
+              <button type="button" onclick="changeCalendarMonth(-1)">‹</button>
+              <button type="button" onclick="changeCalendarMonth(1)">›</button>
             </div>
-            <div id="calendarWeekdays" class="calendar-grid"></div>
-            <div id="calendarDays" class="calendar-grid"></div>
-            <div class="calendar-legend">
-              <div class="legend-item"><span class="legend-dot" style="background:var(--vacation-text)"></span><span>Отпуск</span></div>
-              <div class="legend-item"><span class="legend-dot" style="background:var(--conflict-text)"></span><span>Замена</span></div>
-              <div class="legend-item"><span class="legend-dot" style="background:var(--holiday-text)"></span><span>Праздник</span></div>
-            </div>
+          </div>
+          <div id="calendarWeekdays" class="calendar-grid"></div>
+          <div id="calendarDays" class="calendar-grid"></div>
+          <div class="calendar-legend">
+            <div class="legend-item"><span class="legend-dot" style="background:var(--vacation-text)"></span><span>Отпуск</span></div>
+            <div class="legend-item"><span class="legend-dot" style="background:var(--conflict-text)"></span><span>Замена</span></div>
+            <div class="legend-item"><span class="legend-dot" style="background:var(--holiday-text)"></span><span>Праздник</span></div>
+          </div>
           </div>
         </div>
       </div>
@@ -877,462 +898,7 @@
 
     const CSV = {
       watch: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_j9JH9OK3SyTfOF0dtATg3M-eBFtfW5Cv3jorD1fTU6VcIQTAPhlkExjG6bUAnT2tNAzMmtO1PRci/pub?gid=1954389003&single=true&output=csv",
-      tours: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_j9JH9OK3SyTfOF0dtATg3M-eBFtfW5Cv3jorD1fTU6VcIQTAPhlkExjG6bUAnT2tNAzMmtO1PRci/pub?gid=1910645083&single=true&output=csv",
-      schedule: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_j9JH9OK3SyTfOF0dtATg3M-eBFtfW5Cv3jorD1fTU6VcIQTAPhlkExjG6bUAnT2tNAzMmtO1PRci/pub?gid=2107515437&single=true&output=csv",
-      vacation: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_j9JH9OK3SyTfOF0dtATg3M-eBFtfW5Cv3jorD1fTU6VcIQTAPhlkExjG6bUAnT2tNAzMmtO1PRci/pub?gid=899395990&single=true&output=csv",
-      holidays: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_j9JH9OK3SyTfOF0dtATg3M-eBFtfW5Cv3jorD1fTU6VcIQTAPhlkExjG6bUAnT2tNAzMmtO1PRci/pub?gid=72554172&single=true&output=csv",
-      visits: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_j9JH9OK3SyTfOF0dtATg3M-eBFtfW5Cv3jorD1fTU6VcIQTAPhlkExjG6bUAnT2tNAzMmtO1PRci/pub?gid=933327664&single=true&output=csv"
-    };
-
-    let state = {
-      view: "all",
-      search: "",
-      selectedDate: "",
-      calendarYear: new Date().getFullYear(),
-      calendarMonth: new Date().getMonth(),
-      nowIntervalId: null,
-      collapsed: {
-        watch: false,
-        tours: false,
-        schedule: false,
-        vacation: false,
-        visits: false
-      },
-      monthFilter: {
-        watch: "all",
-        tours: "all"
-      },
-      data: {
-        watch: [],
-        tours: [],
-        schedule: [],
-        vacation: [],
-        holidays: [],
-        visits: []
-      }
-    };
-
-    function login() {
-      const passInput = document.getElementById("pass");
-      const loginDiv = document.getElementById("login");
-      const appDiv = document.getElementById("app");
-      const err = document.getElementById("err");
-
-      if (passInput.value === PASSWORD) {
-        err.classList.add("hidden");
-        loginDiv.style.display = "none";
-        appDiv.classList.remove("hidden");
-        load();
-      } else {
-        err.classList.remove("hidden");
-      }
-    }
-
-    function setView(view, el) {
-      state.view = view;
-      document.querySelectorAll(".tab").forEach(tab => tab.classList.remove("active"));
-      if (el) el.classList.add("active");
-      render();
-    }
-
-    function setSearch(value) {
-      state.search = (value || "").trim().toLowerCase();
-      render();
-    }
-
-    function clearSearch() {
-      document.getElementById("searchInput").value = "";
-      state.search = "";
-      render();
-    }
-
-    function toggleSection(key) {
-      state.collapsed[key] = !state.collapsed[key];
-      render();
-    }
-
-    function setMonthFilter(section, month) {
-      state.monthFilter[section] = month;
-      render();
-    }
-
-    function setSelectedDate(key) {
-      state.selectedDate = state.selectedDate === key ? "" : key;
-      render();
-    }
-
-    function clearSelectedDate() {
-      state.selectedDate = "";
-      render();
-    }
-
-    function changeCalendarMonth(delta) {
-      state.calendarMonth += delta;
-      if (state.calendarMonth < 0) {
-        state.calendarMonth = 11;
-        state.calendarYear -= 1;
-      }
-      if (state.calendarMonth > 11) {
-        state.calendarMonth = 0;
-        state.calendarYear += 1;
-      }
-      renderCalendar();
-    }
-
-    function detectDelimiter(headerLine) {
-      const semicolons = (headerLine.match(/;/g) || []).length;
-      const commas = (headerLine.match(/,/g) || []).length;
-      return semicolons > commas ? ";" : ",";
-    }
-
-    function parseCSVLine(line, delimiter) {
-      const result = [];
-      let current = "";
-      let insideQuotes = false;
-
-      for (let i = 0; i < line.length; i++) {
-        const char = line[i];
-        const nextChar = line[i + 1];
-
-        if (char === '"') {
-          if (insideQuotes && nextChar === '"') {
-            current += '"';
-            i++;
-          } else {
-            insideQuotes = !insideQuotes;
-          }
-        } else if (char === delimiter && !insideQuotes) {
-          result.push(current.trim());
-          current = "";
-        } else {
-          current += char;
-        }
-      }
-
-      result.push(current.trim());
-      return result.map(v => v.replace(/^"|"$/g, "").trim());
-    }
-
-    function parse(text) {
-      const cleanText = text.replace(/\r/g, "").trim();
-      if (!cleanText) return [];
-
-      const lines = cleanText.split("\n").filter(line => line.trim() !== "");
-      if (lines.length <= 1) return [];
-
-      const delimiter = detectDelimiter(lines[0]);
-      const headers = parseCSVLine(lines[0], delimiter).map(h => String(h).trim().toLowerCase());
-
-      return lines.slice(1).map(line => {
-        const values = parseCSVLine(line, delimiter);
-        const obj = {};
-        headers.forEach((h, i) => obj[h] = values[i] || "");
-        return obj;
-      });
-    }
-
-    function safe(value) {
-      if (value === undefined || value === null) return "";
-      return String(value).trim();
-    }
-
-    function escapeHtml(str) {
-      return safe(str)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;");
-    }
-
-    function escapeRegExp(str) {
-      return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    }
-
-    function highlight(text) {
-      const value = safe(text);
-      if (!state.search) return escapeHtml(value);
-      const regex = new RegExp("(" + escapeRegExp(state.search) + ")", "ig");
-      return escapeHtml(value).replace(regex, "<mark>$1</mark>");
-    }
-
-    function getInitials(text) {
-      const cleaned = safe(text).replace(/\s+/g, " ").trim();
-      if (!cleaned) return "—";
-      const parts = cleaned.split(" ").filter(Boolean);
-      if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-      return (parts[0][0] + (parts[1]?.[0] || "")).toUpperCase();
-    }
-
-    function parseDate(value) {
-      const v = safe(value);
-      if (!v) return null;
-
-      if (/^\d{2}\.\d{2}\.\d{4}$/.test(v)) {
-        const [d, m, y] = v.split(".").map(Number);
-        return new Date(y, m - 1, d);
-      }
-
-      if (/^\d{4}-\d{2}-\d{2}$/.test(v)) {
-        const [y, m, d] = v.split("-").map(Number);
-        return new Date(y, m - 1, d);
-      }
-
-      return null;
-    }
-
-    function startOfDay(date) {
-      const d = new Date(date);
-      d.setHours(0,0,0,0);
-      return d;
-    }
-
-    function dateKey(date) {
-      return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`;
-    }
-
-    function formatDateKey(key) {
-      if (!key) return "";
-      const [y,m,d] = key.split("-");
-      return `${d}.${m}.${y}`;
-    }
-
-    function matchesSearch(values) {
-      if (!state.search) return true;
-      const joined = values.map(safe).join(" ").toLowerCase();
-      return joined.includes(state.search);
-    }
-
-    function isSelectedDateMatch(textDate) {
-      if (!state.selectedDate) return true;
-      const d = parseDate(textDate);
-      if (!d) return false;
-      return dateKey(d) === state.selectedDate;
-    }
-
-    function isTodayDate(textDate) {
-      const d = parseDate(textDate);
-      if (!d) return false;
-      return dateKey(d) === dateKey(new Date());
-    }
-
-    function parsePeriod(periodText) {
-      const match = safe(periodText).match(/(\d{2}\.\d{2}\.\d{4})\D+(\d{2}\.\d{2}\.\d{4})/);
-      if (!match) return null;
-      return {
-        start: parseDate(match[1]),
-        end: parseDate(match[2])
-      };
-    }
-
-    function isSelectedPeriodMatch(periodText) {
-      if (!state.selectedDate) return true;
-      const period = parsePeriod(periodText);
-      if (!period || !period.start || !period.end) return false;
-      const selected = parseDate(state.selectedDate);
-      if (!selected) return false;
-      const d = startOfDay(selected).getTime();
-      return d >= startOfDay(period.start).getTime() && d <= startOfDay(period.end).getTime();
-    }
-
-    function isTodayInPeriod(periodText) {
-      const period = parsePeriod(periodText);
-      if (!period || !period.start || !period.end) return false;
-      const today = startOfDay(new Date()).getTime();
-      return today >= startOfDay(period.start).getTime() && today <= startOfDay(period.end).getTime();
-    }
-
-    function formatList(items, emptyText = "Нет записей", maxItems = 3) {
-      const list = items.filter(Boolean);
-      if (!list.length) return emptyText;
-      const shown = list.slice(0, maxItems);
-      const rest = list.length - shown.length;
-      return shown.join(", ") + (rest > 0 ? ` +${rest}` : "");
-    }
-
-    function goToToday() {
-      const now = new Date();
-      state.selectedDate = dateKey(now);
-      state.calendarYear = now.getFullYear();
-      state.calendarMonth = now.getMonth();
-      render();
-    }
-
-    function renderTodaySummary() {
-      const el = document.getElementById("todaySummary");
-      if (!el) return;
-
-      const todayKey = dateKey(new Date());
-      const todayText = formatDateKey(todayKey);
-
-      const watchRows = state.data.watch.filter(row => {
-        const d = parseDate(row["дата"]);
-        return d && dateKey(d) === todayKey;
-      });
-
-      const toursRows = state.data.tours.filter(row => {
-        const d = parseDate(row["дата"]);
-        return d && dateKey(d) === todayKey;
-      });
-
-      const scheduleRow = state.data.schedule.find(row => isTodayInPeriod(row["период"]));
-
-      const visitsRows = state.data.visits.filter(row => isTodayDate(row["дата"]));
-
-      const vacationRows = state.data.vacation.filter(row => {
-        const start = parseDate(row["начало"]);
-        const end = parseDate(row["конец"]);
-        if (!start || !end) return false;
-        const t = startOfDay(new Date()).getTime();
-        return t >= startOfDay(start).getTime() && t <= startOfDay(end).getTime();
-      });
-
-      const watchNames = watchRows.map(finalPerson).filter(Boolean);
-      const toursNames = toursRows.map(finalPerson).filter(Boolean);
-
-      const watchConflicts = watchRows.filter(row => {
-        const status = safe(row["статус"]).toLowerCase();
-        return status.includes("замена") || status.includes("отпуск") || safe(row["замена"]);
-      }).length;
-
-      const toursConflicts = toursRows.filter(row => {
-        const status = safe(row["статус"]).toLowerCase();
-        return status.includes("замена") || status.includes("отпуск") || safe(row["замена"]);
-      }).length;
-
-      const schedulePerson = scheduleRow ? finalPerson(scheduleRow) : "";
-      const schedulePeriod = scheduleRow ? safe(scheduleRow["период"]) : "";
-
-      const visitsList = visitsRows.map(row =>
-        safe(row["компания"]) || safe(row["гости"]) || safe(row["тема"]) || safe(row["комментарии"]) || ""
-      ).filter(Boolean);
-
-      const vacationNames = vacationRows.map(row => safe(row["фио"]))
-        .filter(Boolean);
-
-      el.innerHTML = `
-        <div class="summary-head">
-          <div>
-            <div class="summary-title">Сегодня</div>
-            <div class="summary-sub">${todayText}</div>
-          </div>
-          <button class="summary-btn" type="button" onclick="goToToday()">Сводка сегодня</button>
-        </div>
-        <div class="summary-grid">
-          <div class="summary-card">
-            <div class="summary-label">Вахта</div>
-            <div class="summary-value">${escapeHtml(formatList(watchNames, "Нет назначений"))}</div>
-            <div class="summary-meta">${watchConflicts ? `Конфликтов: ${watchConflicts}` : ""}</div>
-          </div>
-          <div class="summary-card">
-            <div class="summary-label">Экскурсии</div>
-            <div class="summary-value">${escapeHtml(formatList(toursNames, "Нет назначений"))}</div>
-            <div class="summary-meta">${toursConflicts ? `Конфликтов: ${toursConflicts}` : ""}</div>
-          </div>
-          <div class="summary-card">
-            <div class="summary-label">Расписание</div>
-            <div class="summary-value">${escapeHtml(schedulePerson || "Не назначено")}</div>
-            <div class="summary-meta">${escapeHtml(schedulePeriod)}</div>
-          </div>
-          <div class="summary-card">
-            <div class="summary-label">Визиты</div>
-            <div class="summary-value">${visitsRows.length ? `${visitsRows.length} визит(ов)` : "Нет визитов"}</div>
-            <div class="summary-meta">${escapeHtml(formatList(visitsList, "—"))}</div>
-          </div>
-          <div class="summary-card">
-            <div class="summary-label">Отпуска</div>
-            <div class="summary-value">${vacationRows.length ? `${vacationRows.length} в отпуске` : "Нет"}</div>
-            <div class="summary-meta">${escapeHtml(formatList(vacationNames, "—"))}</div>
-          </div>
-        </div>
-      `;
-    }
-
-    function getHolidayMap() {
-      const map = {};
-      state.data.holidays.forEach(row => {
-        const d = parseDate(row["дата"]);
-        if (!d) return;
-        map[dateKey(d)] = row["название"] || "Праздник";
-      });
-      return map;
-    }
-
-    function buildCalendarData() {
-      const map = {};
-      const holidayMap = getHolidayMap();
-
-      function ensure(key) {
-        if (!map[key]) map[key] = { vacation:false, conflict:false, holiday:false };
-        return map[key];
-      }
-
-      Object.keys(holidayMap).forEach(key => {
-        ensure(key).holiday = true;
-      });
-
-      state.data.vacation.forEach(row => {
-        const start = parseDate(row["начало"]);
-        const end = parseDate(row["конец"]);
-        if (!start || !end) return;
-
-        let d = startOfDay(start);
-        const finish = startOfDay(end);
-
-        while (d <= finish) {
-          ensure(dateKey(d)).vacation = true;
-          d = new Date(d);
-          d.setDate(d.getDate() + 1);
-        }
-      });
-
-      state.data.watch.forEach(row => {
-        const date = parseDate(row["дата"]);
-        const status = safe(row["статус"]).toLowerCase();
-        if (!date) return;
-        if (status.includes("замена") || status.includes("отпуск") || safe(row["замена"])) {
-          ensure(dateKey(date)).conflict = true;
-        }
-      });
-
-      state.data.schedule.forEach(row => {
-        const status = safe(row["статус"]).toLowerCase();
-        if (!(status.includes("замена") || status.includes("отпуск") || safe(row["замена"]))) return;
-        const period = parsePeriod(row["период"]);
-        if (!period) return;
-
-        let d = startOfDay(period.start);
-        const finish = startOfDay(period.end);
-        while (d <= finish) {
-          ensure(dateKey(d)).conflict = true;
-          d = new Date(d);
-          d.setDate(d.getDate() + 1);
-        }
-      });
-
-      return map;
-    }
-
-    function renderCalendar() {
-      const titleEl = document.getElementById("calendarTitle");
-      const weekdaysEl = document.getElementById("calendarWeekdays");
-      const daysEl = document.getElementById("calendarDays");
-      if (!titleEl || !weekdaysEl || !daysEl) return;
-
-      const year = state.calendarYear;
-      const month = state.calendarMonth;
-      const todayKey = dateKey(new Date());
-
-      const monthNames = ["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"];
-      titleEl.textContent = `${monthNames[month]} ${year}`;
-
-      weekdaysEl.innerHTML = ["Пн","Вт","Ср","Чт","Пт","Сб","Вс"]
-        .map(d => `<div class="calendar-weekday">${d}</div>`)
-        .join("");
-
-      const firstDay = new Date(year, month, 1);
-      const lastDay = new Date(year, month + 1, 0);
-      const daysInMonth = lastDay.getDate();
-
-      let startOffset = firstDay.getDay();
+      tours: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_j9JH…3920 tokens truncated…);
       startOffset = startOffset === 0 ? 6 : startOffset - 1;
 
       const dataMap = buildCalendarData();
@@ -1772,7 +1338,6 @@
           true
         );
       }
-
       if (!html) {
         html = `
           <div class="panel card">
@@ -1841,4 +1406,4 @@
 </html>
 ```
 
-Если хочешь более «склеенный» эффект (без внутренних рамок и разделители линиями), скажи — сделаю следующую версию.
+Если хочешь не текстовый логотип, а именно картинку “СИБУРИНТЕХ” — пришли файл логотипа (PNG/SVG), я вставлю его как `<img>`.
