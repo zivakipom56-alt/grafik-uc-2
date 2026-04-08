@@ -3,20 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <title>Графики учебного центра 2.0</title>
   <style>
     :root {
-      --bg:#e8edf2;
-      --bg-soft:#f3f6f8;
+      --bg:#f2f5f8;
+      --bg-soft:#f7f9fb;
       --card:#ffffff;
-      --card-2:#f8fafc;
-      --text:#122033;
-      --muted:#6b7a90;
-      --line:#d9e1ea;
-      --line-strong:#c8d2de;
+      --card-2:#f4f7fb;
+      --text:#0b1a2b;
+      --muted:#5b6c82;
+      --line:#dbe3ec;
+      --line-strong:#c8d6e5;
 
-      --brand:#1f5f8b;
-      --brand-soft:#e7f1f8;
+      --brand:#0b2b5b;
+      --brand-soft:#e6eef9;
 
       --today-bg:#e8f1ff;
       --today-border:#9dbcf0;
@@ -42,7 +46,7 @@
       --warn-bg:#fff4e8;
       --warn-text:#9a5b00;
 
-      --shadow:0 8px 24px rgba(24,39,75,0.06);
+      --shadow:0 18px 40px rgba(15,23,42,0.08);
       --radius-xl:24px;
       --radius-lg:18px;
       --radius-md:14px;
@@ -54,7 +58,7 @@
     html,body {
       margin:0;
       padding:0;
-      font-family:Arial,sans-serif;
+      font-family:"Manrope", Arial, sans-serif;
       color:var(--text);
       background:linear-gradient(180deg,#edf2f6 0%, #e6ebf1 100%);
     }
@@ -482,6 +486,77 @@
       padding:18px;
     }
 
+    .today-summary {
+      padding:18px;
+      margin-bottom:16px;
+    }
+
+    .summary-head {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .summary-title {
+      font-size:20px;
+      font-weight:800;
+      letter-spacing:-0.2px;
+    }
+
+    .summary-sub {
+      margin-top:4px;
+      font-size:13px;
+      color:var(--muted);
+    }
+
+    .summary-btn {
+      background:var(--brand);
+      color:#fff;
+      border:none;
+      border-radius:12px;
+      padding:10px 14px;
+      font-size:13px;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+    .summary-grid {
+      margin-top:14px;
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+      gap:12px;
+    }
+
+    .summary-card {
+      background:var(--card-2);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+    }
+
+    .summary-label {
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.7px;
+      color:var(--muted);
+      font-weight:700;
+    }
+
+    .summary-value {
+      margin-top:6px;
+      font-size:18px;
+      font-weight:800;
+      line-height:1.25;
+    }
+
+    .summary-meta {
+      margin-top:6px;
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.4;
+    }
+
     .section-head {
       display:flex;
       align-items:center;
@@ -551,41 +626,41 @@
 
     .row {
       display:flex;
-      gap:14px;
+      gap:12px;
       align-items:flex-start;
-      padding:15px 2px;
+      padding:10px 2px;
       border-bottom:1px solid var(--line);
     }
 
     .row:last-child { border-bottom:none; }
 
     .row.conflict {
-      margin:8px 0;
-      padding:15px;
+      margin:6px 0;
+      padding:10px 12px;
       border:1px solid var(--conflict-border);
-      border-radius:16px;
+      border-radius:14px;
       background:var(--conflict-bg);
     }
 
     .row.today {
       background:var(--today-row-bg);
       border:1px solid var(--today-row-border);
-      border-radius:16px;
-      padding:15px;
-      margin:8px 0;
+      border-radius:14px;
+      padding:10px 12px;
+      margin:6px 0;
     }
 
     .avatar {
-      width:42px;
-      height:42px;
-      min-width:42px;
+      width:36px;
+      height:36px;
+      min-width:36px;
       border-radius:50%;
       display:flex;
       align-items:center;
       justify-content:center;
       background:#d9e8f3;
       color:var(--brand);
-      font-size:14px;
+      font-size:12px;
       font-weight:800;
       border:1px solid #c7d8e5;
     }
@@ -596,30 +671,30 @@
     }
 
     .main-line {
-      font-size:16px;
-      line-height:1.4;
+      font-size:15px;
+      line-height:1.3;
       font-weight:800;
       word-break:break-word;
     }
 
     .meta {
-      margin-top:5px;
-      font-size:13px;
-      line-height:1.5;
+      margin-top:3px;
+      font-size:12px;
+      line-height:1.35;
       color:var(--muted);
     }
 
     .badges {
       display:flex;
       flex-wrap:wrap;
-      gap:8px;
-      margin-top:10px;
+      gap:6px;
+      margin-top:6px;
     }
 
     .badge {
-      padding:6px 10px;
+      padding:4px 8px;
       border-radius:999px;
-      font-size:12px;
+      font-size:11px;
       font-weight:700;
       border:1px solid transparent;
       background:#eef4f8;
@@ -766,6 +841,8 @@
           </div>
         </div>
       </div>
+
+      <div id="todaySummary" class="panel today-summary"></div>
 
       <div id="statsGrid" class="stats"></div>
 
@@ -1066,6 +1143,112 @@
       if (!period || !period.start || !period.end) return false;
       const today = startOfDay(new Date()).getTime();
       return today >= startOfDay(period.start).getTime() && today <= startOfDay(period.end).getTime();
+    }
+
+    function formatList(items, emptyText = "Нет записей", maxItems = 3) {
+      const list = items.filter(Boolean);
+      if (!list.length) return emptyText;
+      const shown = list.slice(0, maxItems);
+      const rest = list.length - shown.length;
+      return shown.join(", ") + (rest > 0 ? ` +${rest}` : "");
+    }
+
+    function goToToday() {
+      const now = new Date();
+      state.selectedDate = dateKey(now);
+      state.calendarYear = now.getFullYear();
+      state.calendarMonth = now.getMonth();
+      render();
+    }
+
+    function renderTodaySummary() {
+      const el = document.getElementById("todaySummary");
+      if (!el) return;
+
+      const todayKey = dateKey(new Date());
+      const todayText = formatDateKey(todayKey);
+
+      const watchRows = state.data.watch.filter(row => {
+        const d = parseDate(row["дата"]);
+        return d && dateKey(d) === todayKey;
+      });
+
+      const toursRows = state.data.tours.filter(row => {
+        const d = parseDate(row["дата"]);
+        return d && dateKey(d) === todayKey;
+      });
+
+      const scheduleRow = state.data.schedule.find(row => isTodayInPeriod(row["период"]));
+
+      const visitsRows = state.data.visits.filter(row => isTodayDate(row["дата"]));
+
+      const vacationRows = state.data.vacation.filter(row => {
+        const start = parseDate(row["начало"]);
+        const end = parseDate(row["конец"]);
+        if (!start || !end) return false;
+        const t = startOfDay(new Date()).getTime();
+        return t >= startOfDay(start).getTime() && t <= startOfDay(end).getTime();
+      });
+
+      const watchNames = watchRows.map(finalPerson).filter(Boolean);
+      const toursNames = toursRows.map(finalPerson).filter(Boolean);
+
+      const watchConflicts = watchRows.filter(row => {
+        const status = safe(row["статус"]).toLowerCase();
+        return status.includes("замена") || status.includes("отпуск") || safe(row["замена"]);
+      }).length;
+
+      const toursConflicts = toursRows.filter(row => {
+        const status = safe(row["статус"]).toLowerCase();
+        return status.includes("замена") || status.includes("отпуск") || safe(row["замена"]);
+      }).length;
+
+      const schedulePerson = scheduleRow ? finalPerson(scheduleRow) : "";
+      const schedulePeriod = scheduleRow ? safe(scheduleRow["период"]) : "";
+
+      const visitsList = visitsRows.map(row =>
+        safe(row["компания"]) || safe(row["гости"]) || safe(row["тема"]) || safe(row["комментарии"]) || ""
+      ).filter(Boolean);
+
+      const vacationNames = vacationRows.map(row => safe(row["фио"]))
+        .filter(Boolean);
+
+      el.innerHTML = `
+        <div class="summary-head">
+          <div>
+            <div class="summary-title">Сегодня</div>
+            <div class="summary-sub">${todayText}</div>
+          </div>
+          <button class="summary-btn" type="button" onclick="goToToday()">Показать в списках</button>
+        </div>
+        <div class="summary-grid">
+          <div class="summary-card">
+            <div class="summary-label">Вахта</div>
+            <div class="summary-value">${escapeHtml(formatList(watchNames, "Нет назначений"))}</div>
+            <div class="summary-meta">${watchConflicts ? `Конфликтов: ${watchConflicts}` : ""}</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-label">Экскурсии</div>
+            <div class="summary-value">${escapeHtml(formatList(toursNames, "Нет назначений"))}</div>
+            <div class="summary-meta">${toursConflicts ? `Конфликтов: ${toursConflicts}` : ""}</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-label">Расписание</div>
+            <div class="summary-value">${escapeHtml(schedulePerson || "Не назначено")}</div>
+            <div class="summary-meta">${escapeHtml(schedulePeriod)}</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-label">Визиты</div>
+            <div class="summary-value">${visitsRows.length ? `${visitsRows.length} визит(ов)` : "Нет визитов"}</div>
+            <div class="summary-meta">${escapeHtml(formatList(visitsList, "—"))}</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-label">Отпуска</div>
+            <div class="summary-value">${vacationRows.length ? `${vacationRows.length} в отпуске` : "Нет"}</div>
+            <div class="summary-meta">${escapeHtml(formatList(vacationNames, "—"))}</div>
+          </div>
+        </div>
+      `;
     }
 
     function getHolidayMap() {
@@ -1549,6 +1732,7 @@
         );
       }
 
+
       if (state.view === "all" || state.view === "visits") {
         const visitsRows = state.data.visits.filter(row =>
           matchesSearch([row["дата"], row["компания"], row["гости"], row["тема"], row["комментарии"], row["комментарий"]]) &&
@@ -1580,10 +1764,10 @@
               conflict: false,
               today: isToday
             });
-          }
+          },
+          true
         );
       }
-
       if (!html) {
         html = `
           <div class="panel card">
@@ -1593,14 +1777,16 @@
       }
 
       document.getElementById("content").innerHTML = html;
+      renderTodaySummary();
       renderSelectedDateInfo();
       renderCalendar();
       renderNowCard();
       renderStats();
     }
 
+
     function loadCsv(url) {
-      if (!url) return Promise.resolve("");
+      if (!url) return Promise.resolve("" );
       return fetch(url).then(r => r.text());
     }
 
