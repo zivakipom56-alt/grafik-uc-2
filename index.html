@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Графики учебного центра 2.0</title>
+  <style>
+    :root {
+      --bg: #f4f6fb;
+      --card: rgba(255, 255, 255, 0.96);
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e6eaf2;
+      --accent: #5b6cff;
+      --accent2: #7c5cff;
+      --accent-soft: rgba(91, 108, 255, 0.10);
+      --ok-bg: #edf8f1;
+      --ok-text: #1f7a45;
+      --warn-bg: #fff4e8;
+      --warn-text: #9a5b00;
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(124, 92, 255, 0.08), transparent 30%),
+        radial-gradient(circle at top right, rgba(91, 108, 255, 0.08), transparent 25%),
+        linear-gradient(180deg, #f7f9ff 0%, #f3f6fb 100%);
+    }
+
+    .hidden { display: none !important; }
+
+    .login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 400px;
+      background: var(--card);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.7);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      padding: 30px;
+    }
+
+    .login-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent2);
+      font-size: 13px;
+      margin-bottom: 16px;
+      font-weight: 700;
+    }
+
+    .login-card h2 {
+      margin: 0 0 10px;
+      font-size: 34px;
+      line-height: 1.05;
+    }
+
+    .login-card p {
+      margin: 0 0 18px;
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 14px;
+    }
+
+    .login-card input {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      font-size: 15px;
+      outline: none;
+      margin-bottom: 12px;
+      background: rgba(255,255,255,0.9);
+    }
+
+    .login-card input:focus,
+    .search input:focus {
+      border-color: rgba(91, 108, 255, 0.45);
+      box-shadow: 0 0 0 4px rgba(91, 108, 255, 0.10);
+    }
+
+    .btn {
+      border: none;
+      border-radius: 16px;
+      padding: 13px 18px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: 0.18s ease;
+    }
+
+    .btn-primary {
+      width: 100%;
+      color: white;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+      box-shadow: 0 10px 18px rgba(91, 108, 255, 0.20);
+    }
+
+    .btn-light {
+      background: white;
+      color: var(--text);
+      border: 1px solid var(--border);
+      box-shadow: 0 6px 14px rgba(15,23,42,0.04);
+    }
+
+    .error {
+      color: #c62828;
+      font-size: 14px;
+      margin-top: 12px;
+    }
+
+    .app {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 26px 18px 40px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.96) 0%, rgba(246,248,255,0.96) 100%);
+      border: 1px solid rgba(255,255,255,0.7);
+      border-radius: 32px;
+      box-shadow: var(--shadow);
+      padding: 30px;
+      margin-bottom: 22px;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -60px;
+      top: -60px;
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(circle, rgba(91,108,255,0.18) 0%, rgba(91,108,255,0) 70%);
+      pointer-events: none;
+    }
+
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: 58px;
+      line-height: 0.95;
+      letter-spacing: -0.03em;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 760px;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 15px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 22px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .stat-card {
+      background: rgba(255,255,255,0.88);
+      border: 1px solid rgba(255,255,255,0.8);
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: 0 8px 16px rgba(15, 23, 42, 0.04);
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 34px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.9);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 11px 15px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: 0.15s ease;
+      box-shadow: 0 4px 10px rgba(15,23,42,0.03);
+    }
+
+    .tab.active {
+      color: white;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+      border-color: transparent;
+      box-shadow: 0 10px 18px rgba(91, 108, 255, 0.18);
+    }
+
+    .search {
+      min-width: 260px;
+      flex: 1;
+      max-width: 360px;
+    }
+
+    .search input {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      font-size: 14px;
+      outline: none;
+      background: rgba(255,255,255,0.95);
+    }
+
+    .cards {
+      display: grid;
+      gap: 18px;
+    }
+
+    .section-card {
+      background: rgba(255,255,255,0.96);
+      border: 1px solid rgba(255,255,255,0.8);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 20px 22px;
+      border-bottom: 1px solid #f0f3f8;
+      flex-wrap: wrap;
+      background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(250,251,255,0.9));
+    }
+
+    .section-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .section-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--accent-soft);
+      font-size: 21px;
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: 24px;
+      letter-spacing: -0.02em;
+    }
+
+    .section-subtitle {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .badge {
+      background: #f4f6fb;
+      color: #334155;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 13px;
+      border: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    .rows {
+      padding: 8px 22px 16px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 120px 1fr auto;
+      gap: 14px;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px solid #f0f2f6;
+    }
+
+    .row:last-child {
+      border-bottom: none;
+    }
+
+    .row-date {
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .row-main {
+      font-weight: 600;
+    }
+
+    .row-muted {
+      color: var(--muted);
+      font-size: 13px;
+      text-align: right;
+    }
+
+    .status-ok,
+    .status-warn {
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .status-ok {
+      background: var(--ok-bg);
+      color: var(--ok-text);
+    }
+
+    .status-warn {
+      background: var(--warn-bg);
+      color: var(--warn-text);
+    }
+
+    .empty {
+      padding: 18px 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .error-box {
+      background: rgba(255,255,255,0.96);
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      color: #c62828;
+      white-space: pre-line;
+    }
+
+    @media (max-width: 950px) {
+      .hero h1 { font-size: 44px; }
+      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 700px) {
+      .row {
+        grid-template-columns: 1fr;
+        gap: 6px;
+      }
+
+      .row-muted {
+        text-align: left;
+      }
+
+      .stats { grid-template-columns: 1fr; }
+      .hero { padding: 22px; }
+      .hero h1 { font-size: 38px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="loginScreen" class="login-screen">
+    <div class="login-card">
+      <div class="login-chip">СИБУР · Учебный центр</div>
+      <h2>Графики 2.0</h2>
+      <p>Страница просмотра графиков, отпусков и замен.</p>
+      <input id="passwordInput" type="password" placeholder="Пароль" />
+      <button id="loginBtn" class="btn btn-primary">Войти</button>
+      <div id="loginError" class="error hidden">Неверный пароль</div>
+    </div>
+  </div>
+
+  <div id="appScreen" class="hidden">
+    <div class="app">
+      <div class="hero">
+        <div class="hero-top">
+          <div>
+            <h1>Графики</h1>
+            <p>
+              Новая версия страницы. Данные подтягиваются из новой Google-таблицы с генератором.
+            </p>
+          </div>
+          <div class="actions">
+            <button id="refreshBtn" class="btn btn-light">Обновить</button>
+          </div>
+        </div>
+
+        <div class="stats">
+          <div class="stat-card">
+            <div class="stat-label">Вахта</div>
+            <div id="statWatch" class="stat-value">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Экскурсии</div>
+            <div id="statTours" class="stat-value">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Расписание</div>
+            <div id="statSchedule" class="stat-value">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Отпуска</div>
+            <div id="statVacation" class="stat-value">0</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="tabs">
+          <button class="tab active" data-view="all">Все</button>
+          <button class="tab" data-view="watch">Вахта</button>
+          <button class="tab" data-view="tours">Экскурсии</button>
+          <button class="tab" data-view="schedule">Расписание</button>
+          <button class="tab" data-view="vacation">Отпуска</button>
+        </div>
+        <div class="search">
+          <input id="searchInput" type="text" placeholder="Поиск по дате, ФИО, комментарию" />
+        </div>
+      </div>
+
+      <div id="content" class="cards">
+        <div class="section-card">
+          <div class="rows">
+            <div class="empty">Загрузка данных...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const PASSWORD = "2305";
+
+    const CSV_URLS = {
+      watch: "PASTE_NEW_WATCH_CSV_URL_HERE",
+      tours: "PASTE_NEW_TOURS_CSV_URL_HERE",
+      schedule: "PASTE_NEW_SCHEDULE_CSV_URL_HERE",
+      vacation: "PASTE_NEW_VACATION_CSV_URL_HERE"
+    };
+
+    const loginScreen = document.getElementById("loginScreen");
+    const appScreen = document.getElementById("appScreen");
+    const loginBtn = document.getElementById("loginBtn");
+    const loginError = document.getElementById("loginError");
+    const refreshBtn = document.getElementById("refreshBtn");
+    const passwordInput = document.getElementById("passwordInput");
+    const content = document.getElementById("content");
+    const searchInput = document.getElementById("searchInput");
+    const tabs = Array.from(document.querySelectorAll(".tab"));
+
+    const statWatch = document.getElementById("statWatch");
+    const statTours = document.getElementById("statTours");
+    const statSchedule = document.getElementById("statSchedule");
+    const statVacation = document.getElementById("statVacation");
+
+    let state = {
+      view: "all",
+      search: "",
+      data: {
+        watch: [],
+        tours: [],
+        schedule: [],
+        vacation: []
+      }
+    };
+
+    function esc(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function normalizeHeader(str) {
+      return String(str || "")
+        .replace(/^\uFEFF/, "")
+        .replace(/^"|"$/g, "")
+        .replace(/\u00A0/g, " ")
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, "");
+    }
+
+    function splitCsvLine(line, delimiter) {
+      const result = [];
+      let current = "";
+      let inQuotes = false;
+
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        const next = line[i + 1];
+
+        if (char === '"' && inQuotes && next === '"') {
+          current += '"';
+          i++;
+        } else if (char === '"') {
+          inQuotes = !inQuotes;
+        } else if (char === delimiter && !inQuotes) {
+          result.push(current);
+          current = "";
+        } else {
+          current += char;
+        }
+      }
+
+      result.push(current);
+      return result.map(v => v.replace(/^"|"$/g, "").trim());
+    }
+
+    function detectDelimiter(firstLine) {
+      const semicolons = (firstLine.match(/;/g) || []).length;
+      const commas = (firstLine.match(/,/g) || []).length;
+      return semicolons > commas ? ";" : ",";
+    }
+
+    function parseCSV(text) {
+      const cleanText = text.replace(/\r/g, "").trim();
+      if (!cleanText) return [];
+
+      const lines = cleanText.split("\n").filter(Boolean);
+      if (!lines.length) return [];
+
+      const delimiter = detectDelimiter(lines[0]);
+      const headers = splitCsvLine(lines[0], delimiter).map(normalizeHeader);
+
+      return lines.slice(1).map(line => {
+        const values = splitCsvLine(line, delimiter);
+        const obj = {};
+        headers.forEach((h, i) => {
+          obj[h] = (values[i] || "").trim();
+        });
+        return obj;
+      });
+    }
+
+    async function loadCsv(url) {
+      const res = await fetch(url);
+      if (!res.ok) {
+        throw new Error(`Не удалось загрузить CSV: ${url}`);
+      }
+      const text = await res.text();
+      return parseCSV(text);
+    }
+
+    function pick(obj, keys) {
+      for (const key of keys) {
+        if (obj[key] !== undefined && obj[key] !== "") return obj[key];
+      }
+      return "";
+    }
+
+    function login() {
+      const val = passwordInput.value;
+      if (val === PASSWORD) {
+        loginError.classList.add("hidden");
+        loginScreen.style.display = "none";
+        appScreen.classList.remove("hidden");
+        loadData();
+      } else {
+        loginError.classList.remove("hidden");
+      }
+    }
+
+    function updateStats() {
+      statWatch.textContent = state.data.watch.length;
+      statTours.textContent = state.data.tours.length;
+      statSchedule.textContent = state.data.schedule.length;
+      statVacation.textContent = state.data.vacation.length;
+    }
+
+    function matchesSearch(row, keys, query) {
+      if (!query) return true;
+      const text = keys.map(key => pick(row, [key])).join(" ").toLowerCase();
+      return text.includes(query);
+    }
+
+    function resolveFinalPerson(row) {
+      return (
+        pick(row, ["итог"]) ||
+        pick(row, ["замена"]) ||
+        pick(row, ["назначен"])
+      );
+    }
+
+    function resolveStatus(row) {
+      return pick(row, ["статус"]) || "ОК";
+    }
+
+    function renderRows(rows, formatter) {
+      if (!rows.length) {
+        return `<div class="empty">Нет данных</div>`;
+      }
+      return rows.map(formatter).join("");
+    }
+
+    function renderSectionCard({ key, title, subtitle, icon, count, rowsHtml }) {
+      return `
+        <section class="section-card" data-section="${esc(key)}">
+          <div class="section-head">
+            <div class="section-title-wrap">
+              <div class="section-icon">${icon}</div>
+              <div>
+                <h2 class="section-title">${esc(title)}</h2>
+                <div class="section-subtitle">${esc(subtitle)}</div>
+              </div>
+            </div>
+            <div class="badge">${count} записей</div>
+          </div>
+          <div class="rows">
+            ${rowsHtml}
+          </div>
+        </section>
+      `;
+    }
+
+    function renderApp() {
+      const query = state.search.trim().toLowerCase();
+
+      const watch = state.data.watch.filter(row =>
+        matchesSearch(row, ["месяц", "дата", "день", "назначен", "замена", "итог", "статус", "комментарий"], query)
+      );
+
+      const tours = state.data.tours.filter(row =>
+        matchesSearch(row, ["месяц", "дата", "день", "назначен", "замена", "итог", "статус", "комментарий"], query)
+      );
+
+      const schedule = state.data.schedule.filter(row =>
+        matchesSearch(row, ["месяц", "неделя", "период", "назначен", "замена", "итог", "статус", "комментарий"], query)
+      );
+
+      const vacation = state.data.vacation.filter(row =>
+        matchesSearch(row, ["фио", "начало", "конец"], query)
+      );
+
+      const sections = [];
+
+      if (state.view === "all" || state.view === "watch") {
+        sections.push(renderSectionCard({
+          key: "watch",
+          title: "Вахта",
+          subtitle: "Рабочие дни, отдельный пул сотрудников",
+          icon: "🛎️",
+          count: watch.length,
+          rowsHtml: renderRows(
+            watch,
+            row => {
+              const status = resolveStatus(row);
+              const finalPerson = resolveFinalPerson(row);
+              const statusClass = status === "ОК" ? "status-ok" : "status-warn";
+
+              return `
+                <div class="row">
+                  <div class="row-date">${esc(pick(row, ["дата"]))}</div>
+                  <div>
+                    <div class="row-main">${esc(finalPerson || "—")}</div>
+                    <div class="row-muted">
+                      ${esc(pick(row, ["день"]))}
+                      ${pick(row, ["замена"]) ? ` · Замена: ${esc(pick(row, ["замена"]))}` : ""}
+                      ${pick(row, ["комментарий"]) ? ` · ${esc(pick(row, ["комментарий"]))}` : ""}
+                    </div>
+                  </div>
+                  <div class="${statusClass}">${esc(status)}</div>
+                </div>
+              `;
+            }
+          )
+        }));
+      }
+
+      if (state.view === "all" || state.view === "tours") {
+        sections.push(renderSectionCard({
+          key: "tours",
+          title: "Экскурсии",
+          subtitle: "Каждый рабочий день, общий пул сотрудников",
+          icon: "🧭",
+          count: tours.length,
+          rowsHtml: renderRows(
+            tours,
+            row => {
+              const status = resolveStatus(row);
+              const finalPerson = resolveFinalPerson(row);
+              const statusClass = status === "ОК" ? "status-ok" : "status-warn";
+
+              return `
+                <div class="row">
+                  <div class="row-date">${esc(pick(row, ["дата"]))}</div>
+                  <div>
+                    <div class="row-main">${esc(finalPerson || "—")}</div>
+                    <div class="row-muted">
+                      ${esc(pick(row, ["день"]))}
+                      ${pick(row, ["замена"]) ? ` · Замена: ${esc(pick(row, ["замена"]))}` : ""}
+                      ${pick(row, ["комментарий"]) ? ` · ${esc(pick(row, ["комментарий"]))}` : ""}
+                    </div>
+                  </div>
+                  <div class="${statusClass}">${esc(status)}</div>
+                </div>
+              `;
+            }
+          )
+        }));
+      }
+
+      if (state.view === "all" || state.view === "schedule") {
+        sections.push(renderSectionCard({
+          key: "schedule",
+          title: "Расписание",
+          subtitle: "Один ответственный на рабочую неделю",
+          icon: "📅",
+          count: schedule.length,
+          rowsHtml: renderRows(
+            schedule,
+            row => {
+              const status = resolveStatus(row);
+              const finalPerson = resolveFinalPerson(row);
+              const statusClass = status === "ОК" ? "status-ok" : "status-warn";
+
+              return `
+                <div class="row">
+                  <div class="row-date">Неделя ${esc(pick(row, ["неделя"]))}</div>
+                  <div>
+                    <div class="row-main">${esc(finalPerson || "—")}</div>
+                    <div class="row-muted">
+                      ${esc(pick(row, ["период"]))}
+                      ${pick(row, ["замена"]) ? ` · Замена: ${esc(pick(row, ["замена"]))}` : ""}
+                      ${pick(row, ["комментарий"]) ? ` · ${esc(pick(row, ["комментарий"]))}` : ""}
+                    </div>
+                  </div>
+                  <div class="${statusClass}">${esc(status)}</div>
+                </div>
+              `;
+            }
+          )
+        }));
+      }
+
+      if (state.view === "all" || state.view === "vacation") {
+        sections.push(renderSectionCard({
+          key: "vacation",
+          title: "Отпуска",
+          subtitle: "Годовой список отпускных периодов",
+          icon: "🏖️",
+          count: vacation.length,
+          rowsHtml: renderRows(
+            vacation,
+            row => `
+              <div class="row">
+                <div class="row-date">${esc(pick(row, ["начало"]))}</div>
+                <div>
+                  <div class="row-main">${esc(pick(row, ["фио"]))}</div>
+                  <div class="row-muted">До ${esc(pick(row, ["конец"]))}</div>
+                </div>
+                <div class="status-ok">Отпуск</div>
+              </div>
+            `
+          )
+        }));
+      }
+
+      content.innerHTML = sections.join("");
+    }
+
+    async function loadData() {
+      content.innerHTML = `
+        <div class="section-card">
+          <div class="rows">
+            <div class="empty">Загрузка данных...</div>
+          </div>
+        </div>
+      `;
+
+      try {
+        const [watch, tours, schedule, vacation] = await Promise.all([
+          loadCsv(CSV_URLS.watch),
+          loadCsv(CSV_URLS.tours),
+          loadCsv(CSV_URLS.schedule),
+          loadCsv(CSV_URLS.vacation)
+        ]);
+
+        state.data = { watch, tours, schedule, vacation };
+        updateStats();
+        renderApp();
+      } catch (err) {
+        content.innerHTML = `
+          <div class="error-box">Ошибка загрузки данных:
+${esc(err.message)}</div>
+        `;
+        console.error(err);
+      }
+    }
+
+    loginBtn.addEventListener("click", login);
+    passwordInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") login();
+    });
+
+    refreshBtn.addEventListener("click", loadData);
+
+    searchInput.addEventListener("input", (e) => {
+      state.search = e.target.value;
+      renderApp();
+    });
+
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        tabs.forEach(item => item.classList.remove("active"));
+        tab.classList.add("active");
+        state.view = tab.dataset.view;
+        renderApp();
+      });
+    });
+  </script>
+</body>
+</html>
