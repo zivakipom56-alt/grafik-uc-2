@@ -74,23 +74,21 @@
     }
 
     .login-box {
-      width:340px;
+      width:380px;
       background:var(--card);
       border:1px solid var(--line);
       border-radius:28px;
-      padding:28px;
+      padding:28px 28px 30px;
       box-shadow:var(--shadow);
+      text-align:center;
     }
 
-    .login-chip {
-      display:inline-block;
-      padding:6px 12px;
-      border-radius:999px;
-      background:var(--brand-soft);
-      color:var(--brand);
-      font-size:12px;
-      font-weight:700;
-      margin-bottom:12px;
+    .login-logo {
+      width:240px;
+      max-width:100%;
+      height:auto;
+      margin:0 auto 16px;
+      display:block;
     }
 
     .login-box h2 {
@@ -198,22 +196,11 @@
     }
 
     .logo {
-      font-size:18px;
-      font-weight:800;
-      letter-spacing:1px;
-      color:var(--brand);
-      margin-bottom:6px;
-      text-transform:uppercase;
-    }
-
-    .logo span {
-      display:inline-block;
-      margin-left:6px;
-      font-size:12px;
-      font-weight:700;
-      letter-spacing:2px;
-      color:#0a6f6b;
-      transform:translateY(-2px);
+      display:block;
+      width:180px;
+      max-width:100%;
+      height:auto;
+      margin-bottom:8px;
     }
 
     .hero-date-info {
@@ -269,9 +256,9 @@
 
     .now {
       padding:18px;
-      background:linear-gradient(180deg,#0f7e7a 0%, #0b5f5c 100%);
-      color:#fff;
-      border:1px solid rgba(255,255,255,0.12);
+      background:linear-gradient(180deg,#f2fbfa 0%, #e8f5f4 100%);
+      color:var(--text);
+      border:1px solid #cfe4e2;
     }
 
     .now-label {
@@ -297,6 +284,16 @@
       letter-spacing:1px;
     }
 
+    .now-time-wrap {
+      display:inline-block;
+      padding:10px 14px;
+      border-radius:16px;
+      background:linear-gradient(180deg,#f2fbfa 0%, #e8f5f4 100%);
+      border:1px solid #cfe4e2;
+      box-shadow:0 10px 18px rgba(15,23,42,0.06);
+      margin-bottom:10px;
+    }
+
     .now-meta {
       margin-top:14px;
       display:flex;
@@ -309,8 +306,9 @@
       border-radius:999px;
       font-size:11px;
       font-weight:700;
-      background:rgba(255,255,255,0.09);
-      border:1px solid rgba(255,255,255,0.10);
+      background:#e0f1f0;
+      border:1px solid #c3e2df;
+      color:var(--text);
     }
 
     .calendar {
@@ -434,6 +432,38 @@
       width:8px;
       height:8px;
       border-radius:50%;
+    }
+
+    .stats {
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:12px;
+      margin-bottom:16px;
+    }
+
+    .stat {
+      padding:16px;
+    }
+
+    .stat-label {
+      font-size:12px;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.7px;
+      margin-bottom:8px;
+      font-weight:700;
+    }
+
+    .stat-value {
+      font-size:30px;
+      line-height:1;
+      font-weight:800;
+      margin-bottom:6px;
+    }
+
+    .stat-sub {
+      font-size:13px;
+      color:var(--muted);
     }
 
     .toolbar {
@@ -805,7 +835,7 @@
 <body>
   <div id="login" class="login">
     <div class="login-box">
-      <div class="login-chip">СИБУР · Учебный центр</div>
+      <img class="login-logo" src="sibur-logo.png" alt="СИБУР" />
       <h2>Графики</h2>
       <input id="pass" type="password" placeholder="Пароль" />
       <button onclick="login()">Войти</button>
@@ -819,41 +849,39 @@
       <div class="panel header-panel">
         <div class="header-grid">
           <div class="panel hero">
-            <div class="hero-top">
-              <div>
-                <div class="logo">СИБУР<span>ИНТЕХ</span></div>
-                <h1>Графики</h1>
-                <p class="hero-sub">Единая страница дежурств, расписания и отпусков</p>
-              </div>
-              <div>
-                <button onclick="load()" style="width:auto;">Обновить</button>
-              </div>
+          <div class="hero-top">
+            <div>
+              <img class="logo" src="sibur-intech.png" alt="СИБУРИНТЕХ" />
+              <h1>Графики</h1>
+              <p class="hero-sub">Единая страница дежурств, расписания и отпусков</p>
             </div>
-            <div id="dateInfo" class="hero-date-info"></div>
+            <div>
+              <button onclick="load()" style="width:auto;">Обновить</button>
+            </div>
           </div>
-
+          <div id="dateInfo" class="hero-date-info"></div>
+        </div>
           <div class="panel now">
-            <div class="now-label">Сейчас</div>
-            <div id="nowDate" class="now-date">—</div>
-            <div id="nowTime" class="now-time">--:--</div>
-            <div id="nowMeta" class="now-meta"></div>
-          </div>
-
+          <div class="now-label">Сейчас</div>
+          <div id="nowDate" class="now-date">—</div>
+          <div class="now-time-wrap"><div id="nowTime" class="now-time">--:--</div></div>
+          <div id="nowMeta" class="now-meta"></div>
+        </div>
           <div class="panel calendar">
-            <div class="calendar-head">
-              <div id="calendarTitle" class="calendar-title">Календарь</div>
-              <div class="calendar-nav">
-                <button type="button" onclick="changeCalendarMonth(-1)">‹</button>
-                <button type="button" onclick="changeCalendarMonth(1)">›</button>
-              </div>
+          <div class="calendar-head">
+            <div id="calendarTitle" class="calendar-title">Календарь</div>
+            <div class="calendar-nav">
+              <button type="button" onclick="changeCalendarMonth(-1)">‹</button>
+              <button type="button" onclick="changeCalendarMonth(1)">›</button>
             </div>
-            <div id="calendarWeekdays" class="calendar-grid"></div>
-            <div id="calendarDays" class="calendar-grid"></div>
-            <div class="calendar-legend">
-              <div class="legend-item"><span class="legend-dot" style="background:var(--vacation-text)"></span><span>Отпуск</span></div>
-              <div class="legend-item"><span class="legend-dot" style="background:var(--conflict-text)"></span><span>Замена</span></div>
-              <div class="legend-item"><span class="legend-dot" style="background:var(--holiday-text)"></span><span>Праздник</span></div>
-            </div>
+          </div>
+          <div id="calendarWeekdays" class="calendar-grid"></div>
+          <div id="calendarDays" class="calendar-grid"></div>
+          <div class="calendar-legend">
+            <div class="legend-item"><span class="legend-dot" style="background:var(--vacation-text)"></span><span>Отпуск</span></div>
+            <div class="legend-item"><span class="legend-dot" style="background:var(--conflict-text)"></span><span>Замена</span></div>
+            <div class="legend-item"><span class="legend-dot" style="background:var(--holiday-text)"></span><span>Праздник</span></div>
+          </div>
           </div>
         </div>
       </div>
@@ -1090,7 +1118,7 @@
         return new Date(y, m - 1, d);
       }
 
-      if (/^\d{4}-\d{2}-\d{2}$/.test(v)) {
+      if (/^\d{4}-\d{2}\.\d{2}$/.test(v)) {
         const [y, m, d] = v.split("-").map(Number);
         return new Date(y, m - 1, d);
       }
@@ -1405,42 +1433,6 @@
       el.innerHTML = chips.join("");
     }
 
-    function computeStats() {
-      const today = new Date();
-      const todayKey = dateKey(today);
-
-      const vacationNow = state.data.vacation.filter(row => {
-        const start = parseDate(row["начало"]);
-        const end = parseDate(row["конец"]);
-        if (!start || !end) return false;
-        const t = startOfDay(today).getTime();
-        return t >= startOfDay(start).getTime() && t <= startOfDay(end).getTime();
-      }).length;
-
-      const conflictsToday =
-        state.data.watch.filter(row => {
-          const d = parseDate(row["дата"]);
-          if (!d) return false;
-          return dateKey(d) === todayKey &&
-            (safe(row["статус"]).toLowerCase().includes("замена") ||
-             safe(row["статус"]).toLowerCase().includes("отпуск") ||
-             safe(row["замена"]));
-        }).length;
-
-      const holidayMap = getHolidayMap();
-
-      return {
-        watch: state.data.watch.length,
-        tours: state.data.tours.length,
-        schedule: state.data.schedule.length,
-        vacation: state.data.vacation.length,
-        vacationNow,
-        conflictsToday,
-        holidayToday: holidayMap[todayKey] || "",
-        selectedDate: state.selectedDate ? formatDateKey(state.selectedDate) : "Не выбрана"
-      };
-    }
-
     function renderNowCard() {
       const nowDateEl = document.getElementById("nowDate");
       const nowTimeEl = document.getElementById("nowTime");
@@ -1458,7 +1450,6 @@
       const year = now.getFullYear();
       const hh = String(now.getHours()).padStart(2, "0");
       const mm = String(now.getMinutes()).padStart(2, "0");
-      const ss = String(now.getSeconds()).padStart(2, "0");
 
       nowDateEl.textContent = `${day} ${month} ${year} г.`;
       nowTimeEl.textContent = `${hh}:${mm}`;
@@ -1481,126 +1472,6 @@
       } else {
         nowMetaEl.innerHTML = `<span class="now-pill">Ближайший праздник: —</span>`;
       }
-    }
-
-    function renderStats() {
-      const el = document.getElementById("statsGrid");
-      if (!el) return;
-
-      const stats = computeStats();
-
-      el.innerHTML = `
-        <div class="panel stat">
-          <div class="stat-label">Вахта</div>
-          <div class="stat-value">${stats.watch}</div>
-          <div class="stat-sub">Рабочие дни</div>
-        </div>
-        <div class="panel stat">
-          <div class="stat-label">Экскурсии</div>
-          <div class="stat-value">${stats.tours}</div>
-          <div class="stat-sub">Ежедневные назначения</div>
-        </div>
-        <div class="panel stat">
-          <div class="stat-label">Сейчас в отпуске</div>
-          <div class="stat-value">${stats.vacationNow}</div>
-          <div class="stat-sub">Активные отпускные периоды</div>
-        </div>
-        <div class="panel stat">
-          <div class="stat-label">Выбранная дата</div>
-          <div class="stat-value" style="font-size:22px;">${stats.selectedDate}</div>
-          <div class="stat-sub">Оперативный срез по дню</div>
-        </div>
-      `;
-    }
-
-    function finalPerson(row) {
-      return safe(row["итог"]) || safe(row["замена"]) || safe(row["назначен"]);
-    }
-
-    function rowMonthValue(row) {
-      return safe(row["месяц"]);
-    }
-
-    function getMonthNamesRu() {
-      return [
-        "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
-        "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"
-      ];
-    }
-
-    function monthSelectHtml(sectionKey, selectedValue) {
-      const months = getMonthNamesRu();
-      return `
-        <select
-          class="month-select"
-          onchange="setMonthFilter('${sectionKey}', this.value)"
-          onclick="event.stopPropagation()"
-        >
-          <option value="all" ${selectedValue === "all" ? "selected" : ""}>Все месяцы</option>
-          ${months.map(m => `<option value="${m}" ${selectedValue === m ? "selected" : ""}>${m}</option>`).join("")}
-        </select>
-      `;
-    }
-
-    function renderRow({ avatarText, main, meta, badges = [], conflict = false, today = false }) {
-      return `
-        <div class="row ${conflict ? "conflict" : ""} ${today ? "today" : ""}">
-          <div class="avatar">${escapeHtml(getInitials(avatarText))}</div>
-          <div class="content">
-            <div class="main-line">${main}</div>
-            ${meta ? `<div class="meta">${meta}</div>` : ``}
-            ${badges.length ? `
-              <div class="badges">
-                ${badges.map(tag => {
-                  const cls =
-                    tag === "Конфликт" ? "conflict" :
-                    tag === "Отпуск" ? "vacation" :
-                    tag === "Праздник" ? "holiday" :
-                    tag === "ОК" ? "ok" :
-                    tag === "Сегодня" ? "today" :
-                    "warn";
-                  return `<span class="badge ${cls}">${escapeHtml(tag)}</span>`;
-                }).join("")}
-              </div>
-            ` : ``}
-          </div>
-        </div>
-      `;
-    }
-
-    function renderSection(title, key, subtitle, rows, renderFn, withMonthFilter = false) {
-      const collapsed = state.collapsed[key];
-      const selectedMonth = state.monthFilter[key] || "all";
-
-      const filteredRows = withMonthFilter
-        ? rows.filter(row => {
-            if (selectedMonth === "all") return true;
-            return rowMonthValue(row).includes(selectedMonth);
-          })
-        : rows;
-
-      return `
-        <div class="panel card">
-          <div class="section-head" onclick="toggleSection('${key}')">
-            <div class="section-left">
-              <div>
-                <div class="section-title">${title}</div>
-                <div class="section-subtitle">${subtitle}</div>
-              </div>
-            </div>
-            <div class="section-meta">
-              ${withMonthFilter ? monthSelectHtml(key, selectedMonth) : ""}
-              <div class="counter">${filteredRows.length} записей</div>
-              <button class="collapse-btn" type="button" onclick="event.stopPropagation(); toggleSection('${key}')">
-                ${collapsed ? "Развернуть" : "Свернуть"}
-              </button>
-            </div>
-          </div>
-          <div class="rows ${collapsed ? "collapsed" : ""}">
-            ${filteredRows.length ? filteredRows.map(renderFn).join("") : `<div class="empty">Ничего не найдено</div>`}
-          </div>
-        </div>
-      `;
     }
 
     function render() {
@@ -1791,7 +1662,6 @@
           true
         );
       }
-
       if (!html) {
         html = `
           <div class="panel card">
@@ -1805,11 +1675,10 @@
       renderSelectedDateInfo();
       renderCalendar();
       renderNowCard();
-      renderStats();
     }
 
     function loadCsv(url) {
-      if (!url) return Promise.resolve("" );
+      if (!url) return Promise.resolve("");
       return fetch(url).then(r => r.text());
     }
 
