@@ -1,284 +1,304 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
-          rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
     <title>Графики учебного центра 2.0</title>
+
     <style>
         :root {
-            --bg: #e6f4f2;
-            --bg-soft: #f2fbfa;
-            --card: #ffffff;
-            --card-2: #eef9f8;
-            --text: #043b3a;
-            --muted: #4f6f6e;
-            --line: #cfe4e2;
-            --line-strong: #b7d6d3;
+            --bg:#e6f4f2;
+            --bg-soft:#f2fbfa;
+            --card:#ffffff;
+            --card-2:#eef9f8;
+            --text:#043b3a;
+            --muted:#4f6f6e;
+            --line:#cfe4e2;
+            --line-strong:#b7d6d3;
 
-            --brand: #008d8a;
-            --brand-soft: #d9f4f2;
+            --brand:#008d8a;
+            --brand-soft:#d9f4f2;
 
-            --today-bg: #d9f4f2;
-            --today-border: #8fdad4;
+            --today-bg:#d9f4f2;
+            --today-border:#8fdad4;
 
-            --today-row-bg: #e6f7f6;
-            --today-row-border: #9fded8;
+            --today-row-bg:#e6f7f6;
+            --today-row-border:#9fded8;
 
-            --vacation-bg: #e9f8f7;
-            --vacation-border: #bfe7e4;
-            --vacation-text: #007c78;
+            --vacation-bg:#e9f8f7;
+            --vacation-border:#bfe7e4;
+            --vacation-text:#007c78;
 
-            --conflict-bg: #e1f1f0;
-            --conflict-border: #a9d7d4;
-            --conflict-text: #0b5b57;
+            --conflict-bg:#e1f1f0;
+            --conflict-border:#a9d7d4;
+            --conflict-text:#0b5b57;
 
-            --holiday-bg: #eefbf9;
-            --holiday-border: #bfe8e5;
-            --holiday-text: #008d8a;
+            --holiday-bg:#eefbf9;
+            --holiday-border:#bfe8e5;
+            --holiday-text:#008d8a;
 
-            --ok-bg: #e7f8f6;
-            --ok-text: #0b5b57;
+            --ok-bg:#e7f8f6;
+            --ok-text:#0b5b57;
 
-            --warn-bg: #e8f7f6;
-            --warn-text: #0b5b57;
+            --warn-bg:#e8f7f6;
+            --warn-text:#0b5b57;
 
-            --shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
-            --radius-xl: 24px;
-            --radius-lg: 18px;
-            --radius-md: 14px;
-            --radius-sm: 10px;
+            --shadow:0 18px 40px rgba(15,23,42,0.08);
+            --radius-xl:24px;
+            --radius-lg:18px;
+            --radius-md:14px;
+            --radius-sm:10px;
         }
 
-        * {
-            box-sizing: border-box;
+        * { box-sizing:border-box; }
+
+        html,body {
+            margin:0;
+            padding:0;
+            font-family:"Manrope", Arial, sans-serif;
+            color:var(--text);
+            background:linear-gradient(180deg,#e9f7f6 0%, #e1f1f0 100%);
         }
 
-        html, body {
-            margin: 0;
-            padding: 0;
-            font-family: "Manrope", Arial, sans-serif;
-            color: var(--text);
-            background: linear-gradient(180deg, #e9f7f6 0%, #e1f1f0 100%);
-        }
-
-        .hidden {
-            display: none !important;
-        }
+        .hidden { display:none !important; }
 
         .login {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
+            min-height:100vh;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:24px;
         }
 
         .login-box {
-            width: 340px;
-            background: var(--card);
-            border: 1px solid var(--line);
-            border-radius: 28px;
-            padding: 28px;
-            box-shadow: var(--shadow);
-            text-align: center;
+            width:340px;
+            background:var(--card);
+            border:1px solid var(--line);
+            border-radius:28px;
+            padding:28px;
+            box-shadow:var(--shadow);
+            text-align:center;
         }
 
         .login-box.logo-fallback::before {
-            content: "СИБУР";
-            display: block;
-            font-size: 20px;
-            font-weight: 800;
-            color: var(--brand);
-            margin-bottom: 12px;
-            letter-spacing: 0.5px;
+            content:"СИБУР";
+            display:block;
+            font-size:20px;
+            font-weight:800;
+            color:var(--brand);
+            margin-bottom:12px;
+            letter-spacing:0.5px;
         }
 
         .login-logo {
-            width: 220px;
-            max-width: 100%;
-            height: auto;
-            margin: 0 auto 14px;
-            display: block;
+            width:220px;
+            max-width:100%;
+            height:auto;
+            margin:0 auto 14px;
+            display:block;
         }
 
         .login-box h2 {
-            margin: 0 0 14px;
-            font-size: 28px;
+            margin:0 0 14px;
+            font-size:28px;
         }
 
         input, select {
-            width: 100%;
-            border: 1px solid var(--line-strong);
-            background: #fff;
-            border-radius: 14px;
-            padding: 12px 14px;
-            font-size: 15px;
-            outline: none;
-            transition: .15s ease;
+            width:100%;
+            border:1px solid var(--line-strong);
+            background:#fff;
+            border-radius:14px;
+            padding:12px 14px;
+            font-size:15px;
+            outline:none;
+            transition:.15s ease;
         }
 
         input:focus, select:focus {
-            border-color: #6fc9c4;
-            box-shadow: 0 0 0 4px rgba(0, 141, 138, 0.12);
+            border-color:#6fc9c4;
+            box-shadow:0 0 0 4px rgba(0,141,138,0.12);
         }
 
         button {
-            border: none;
-            border-radius: 14px;
-            padding: 12px 14px;
-            background: var(--brand);
-            color: #fff;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
+            border:none;
+            border-radius:14px;
+            padding:12px 14px;
+            background:var(--brand);
+            color:#fff;
+            font-size:15px;
+            font-weight:700;
+            cursor:pointer;
         }
 
-        button:hover {
-            filter: brightness(0.97);
+        button:hover { filter:brightness(0.97); }
+
+        .secondary-btn {
+            background:#eef7f6;
+            color:var(--text);
+            border:1px solid #cfe4e2;
         }
 
         .container {
-            max-width: 1360px;
-            margin: 0 auto;
-            padding: 20px;
+            max-width:1360px;
+            margin:0 auto;
+            padding:20px;
         }
 
         .header-panel {
-            padding: 18px;
-            margin-bottom: 16px;
-            background: linear-gradient(180deg, #f2fbfa 0%, #e7f4f3 100%);
-            border: 1px solid #cfe4e2;
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow);
+            padding:18px;
+            margin-bottom:16px;
+            background:linear-gradient(180deg,#f2fbfa 0%, #e7f4f3 100%);
+            border:1px solid #cfe4e2;
+            border-radius:var(--radius-xl);
+            box-shadow:var(--shadow);
         }
 
         .header-grid {
-            display: grid;
+            display:grid;
             grid-template-columns: 1.05fr 260px 640px;
-            gap: 12px;
+            gap:12px;
         }
 
         .header-panel .panel {
-            box-shadow: none;
-            border-radius: 18px;
+            box-shadow:none;
+            border-radius:18px;
         }
 
         .header-panel .hero {
-            background: transparent;
-            border: none;
-            padding: 12px 8px 8px;
+            background:transparent;
+            border:none;
+            padding:12px 8px 8px;
         }
 
         .header-panel .calendar {
-            background: #eef7f6;
-            border: 1px solid #cfe4e2;
+            background:#eef7f6;
+            border:1px solid #cfe4e2;
         }
 
         .panel {
-            background: var(--card);
-            border: 1px solid var(--line);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow);
+            background:var(--card);
+            border:1px solid var(--line);
+            border-radius:var(--radius-xl);
+            box-shadow:var(--shadow);
         }
 
         .hero {
-            padding: 20px;
-            background: #f2fbfa;
-            border: 1px solid #d9ecea;
+            padding:20px;
+            background:#f2fbfa;
+            border:1px solid #d9ecea;
         }
 
         .hero-top {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 16px;
+            display:flex;
+            align-items:flex-start;
+            justify-content:space-between;
+            gap:16px;
         }
 
         .hero h1 {
-            margin: 0;
-            font-size: 42px;
-            line-height: 1;
-            letter-spacing: -0.8px;
+            margin:0;
+            font-size:42px;
+            line-height:1;
+            letter-spacing:-0.8px;
         }
 
         .hero-sub {
-            margin: 10px 0 0;
-            color: var(--muted);
-            font-size: 15px;
+            margin:10px 0 0;
+            color:var(--muted);
+            font-size:15px;
         }
 
         .logo {
-            display: block;
-            width: 180px;
-            max-width: 100%;
-            height: auto;
-            margin-bottom: 8px;
+            display:block;
+            width:180px;
+            max-width:100%;
+            height:auto;
+            margin-bottom:8px;
         }
 
         .logo-fallback-inner::before {
-            content: "СИБУРИНТЕХ";
-            display: block;
-            font-size: 16px;
-            font-weight: 800;
-            color: var(--brand);
-            margin-bottom: 6px;
-            letter-spacing: 0.4px;
+            content:"СИБУРИНТЕХ";
+            display:block;
+            font-size:16px;
+            font-weight:800;
+            color:var(--brand);
+            margin-bottom:6px;
+            letter-spacing:0.4px;
+        }
+
+        .hero-actions {
+            display:flex;
+            flex-direction:column;
+            align-items:flex-end;
+            gap:8px;
+            min-width:220px;
         }
 
         .hero-date-info {
-            margin-top: 16px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
+            margin-top:16px;
+            display:flex;
+            flex-wrap:wrap;
+            gap:8px;
         }
 
         .chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 7px 10px;
-            border-radius: 999px;
-            font-size: 12px;
-            font-weight: 700;
-            border: 1px solid transparent;
-            background: var(--bg-soft);
-            color: var(--text);
+            display:inline-flex;
+            align-items:center;
+            gap:6px;
+            padding:7px 10px;
+            border-radius:999px;
+            font-size:12px;
+            font-weight:700;
+            border:1px solid transparent;
+            background:var(--bg-soft);
+            color:var(--text);
         }
 
         .chip.today {
-            background: var(--brand-soft);
-            color: var(--brand);
-            border-color: #cfe2f0;
+            background:var(--brand-soft);
+            color:var(--brand);
+            border-color:#cfe2f0;
         }
 
         .chip.holiday {
-            background: var(--holiday-bg);
-            color: var(--holiday-text);
-            border-color: var(--holiday-border);
+            background:var(--holiday-bg);
+            color:var(--holiday-text);
+            border-color:var(--holiday-border);
         }
 
         .chip.vacation {
-            background: var(--vacation-bg);
-            color: var(--vacation-text);
-            border-color: var(--vacation-border);
+            background:var(--vacation-bg);
+            color:var(--vacation-text);
+            border-color:var(--vacation-border);
         }
 
         .chip.conflict {
-            background: var(--conflict-bg);
-            color: var(--conflict-text);
-            border-color: var(--conflict-border);
+            background:var(--conflict-bg);
+            color:var(--conflict-text);
+            border-color:var(--conflict-border);
         }
 
         .chip.link-chip {
-            cursor: pointer;
-            background: #eef4f8;
-            color: var(--brand);
-            border-color: #d7e4ef;
+            cursor:pointer;
+            background:#eef4f8;
+            color:var(--brand);
+            border-color:#d7e4ef;
+        }
+
+        .chip.file-chip {
+            background:#eef7f6;
+            border-color:#cfe4e2;
+            color:#275754;
+            max-width:100%;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            white-space:nowrap;
         }
 
         .now {
@@ -289,26 +309,26 @@
         }
 
         .now-label {
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            opacity: .85;
-            margin-bottom: 10px;
-            font-weight: 700;
+            font-size:12px;
+            text-transform:uppercase;
+            letter-spacing:1px;
+            opacity:.85;
+            margin-bottom:10px;
+            font-weight:700;
         }
 
         .now-date {
-            font-size: 22px;
-            line-height: 1.25;
-            font-weight: 700;
-            margin-bottom: 12px;
+            font-size:22px;
+            line-height:1.25;
+            font-weight:700;
+            margin-bottom:12px;
         }
 
         .now-time {
-            font-size: 56px;
-            line-height: 1;
-            font-weight: 800;
-            letter-spacing: 1px;
+            font-size:56px;
+            line-height:1;
+            font-weight:800;
+            letter-spacing:1px;
         }
 
         .now-time-wrap {
@@ -322,10 +342,10 @@
         }
 
         .now-meta {
-            margin-top: 14px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
+            margin-top:14px;
+            display:flex;
+            flex-wrap:wrap;
+            gap:6px;
         }
 
         .now-pill {
@@ -339,331 +359,323 @@
         }
 
         .calendar {
-            padding: 18px;
-            background: linear-gradient(180deg, #f2fbfa 0%, #e8f5f4 100%);
-            border: 1px solid #cfe4e2;
+            padding:18px;
+            background:linear-gradient(180deg,#f2fbfa 0%, #e8f5f4 100%);
+            border:1px solid #cfe4e2;
         }
 
         .calendar-head {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 12px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            margin-bottom:12px;
         }
 
         .calendar-title {
-            font-size: 16px;
-            font-weight: 700;
+            font-size:16px;
+            font-weight:700;
         }
 
         .calendar-nav {
-            display: flex;
-            gap: 6px;
+            display:flex;
+            gap:6px;
         }
 
         .calendar-nav button {
-            padding: 7px 10px;
-            min-width: 34px;
-            border-radius: 12px;
-            background: #e0f1f0;
-            color: var(--text);
-            border: 1px solid #c3e2df;
+            padding:7px 10px;
+            min-width:34px;
+            border-radius:12px;
+            background:#e0f1f0;
+            color:var(--text);
+            border:1px solid #c3e2df;
         }
 
         .calendar-grid {
-            display: grid;
-            grid-template-columns:repeat(7, 1fr);
-            gap: 8px;
+            display:grid;
+            grid-template-columns:repeat(7,1fr);
+            gap:8px;
         }
 
         .calendar-weekday {
-            text-align: center;
-            font-size: 11px;
-            font-weight: 700;
-            color: #2a4a48;
-            padding-bottom: 6px;
+            text-align:center;
+            font-size:11px;
+            font-weight:700;
+            color:#2a4a48;
+            padding-bottom:6px;
         }
 
         .calendar-day {
-            min-height: 44px;
-            border: 1px solid transparent;
-            border-radius: 14px;
-            background: #eef7f6;
-            color: var(--text);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: .15s ease;
+            min-height:44px;
+            border:1px solid transparent;
+            border-radius:14px;
+            background:#eef7f6;
+            color:var(--text);
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            font-size:13px;
+            font-weight:600;
+            cursor:pointer;
+            transition:.15s ease;
         }
 
         .calendar-day:hover {
-            border-color: #9fded8;
+            border-color:#9fded8;
         }
 
         .calendar-day.empty {
-            background: transparent;
-            cursor: default;
+            background:transparent;
+            cursor:default;
         }
 
         .calendar-day.today {
-            background: var(--today-bg);
-            border-color: var(--today-border);
-            font-weight: 700;
+            background:var(--today-bg);
+            border-color:var(--today-border);
+            font-weight:700;
         }
 
         .calendar-day.selected {
-            box-shadow: inset 0 0 0 2px #39b7b0;
+            box-shadow:inset 0 0 0 2px #39b7b0;
         }
 
         .calendar-day.holiday {
-            background: #eef9f2;
+            background:#eef9f2;
         }
 
         .calendar-dots {
-            margin-top: 3px;
-            display: flex;
-            gap: 3px;
-            min-height: 5px;
+            margin-top:3px;
+            display:flex;
+            gap:3px;
+            min-height:5px;
         }
 
         .calendar-dot {
-            width: 5px;
-            height: 5px;
-            border-radius: 50%;
+            width:5px;
+            height:5px;
+            border-radius:50%;
         }
 
-        .calendar-dot.vacation {
-            background: var(--vacation-text);
-        }
-
-        .calendar-dot.conflict {
-            background: var(--conflict-text);
-        }
-
-        .calendar-dot.holiday {
-            background: var(--holiday-text);
-        }
+        .calendar-dot.vacation { background:var(--vacation-text); }
+        .calendar-dot.conflict { background:var(--conflict-text); }
+        .calendar-dot.holiday { background:var(--holiday-text); }
 
         .calendar-legend {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-top: 12px;
+            display:flex;
+            gap:8px;
+            flex-wrap:wrap;
+            margin-top:12px;
         }
 
         .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 11px;
-            color: var(--muted);
+            display:flex;
+            align-items:center;
+            gap:6px;
+            font-size:11px;
+            color:var(--muted);
         }
 
         .legend-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
+            width:8px;
+            height:8px;
+            border-radius:50%;
         }
 
         .toolbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            margin-bottom: 14px;
-            flex-wrap: wrap;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+            margin-bottom:14px;
+            flex-wrap:wrap;
         }
 
         .tabs {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
+            display:flex;
+            flex-wrap:wrap;
+            gap:8px;
         }
 
         .tab {
-            background: #fff;
-            color: var(--text);
-            border: 1px solid var(--line-strong);
-            border-radius: 999px;
-            padding: 10px 14px;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
+            background:#fff;
+            color:var(--text);
+            border:1px solid var(--line-strong);
+            border-radius:999px;
+            padding:10px 14px;
+            font-size:14px;
+            font-weight:700;
+            cursor:pointer;
         }
 
         .tab.active {
-            background: var(--brand);
-            color: #fff;
-            border-color: var(--brand);
+            background:var(--brand);
+            color:#fff;
+            border-color:var(--brand);
         }
 
         .search-wrap {
-            min-width: 280px;
-            flex: 1;
-            max-width: 420px;
-            position: relative;
+            min-width:280px;
+            flex:1;
+            max-width:420px;
+            position:relative;
         }
 
         .search {
-            width: 100%;
-            background: #fff;
-            border: 1px solid var(--line-strong);
-            border-radius: 14px;
-            padding: 12px 40px 12px 14px;
-            margin: 0;
+            width:100%;
+            background:#fff;
+            border:1px solid var(--line-strong);
+            border-radius:14px;
+            padding:12px 40px 12px 14px;
+            margin:0;
         }
 
         .clear-search {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            color: #8ca0b3;
-            padding: 0;
-            width: auto;
-            border: none;
-            font-size: 20px;
-            line-height: 1;
-            cursor: pointer;
+            position:absolute;
+            right:12px;
+            top:50%;
+            transform:translateY(-50%);
+            background:none;
+            color:#8ca0b3;
+            padding:0;
+            width:auto;
+            border:none;
+            font-size:20px;
+            line-height:1;
+            cursor:pointer;
         }
 
         .card {
-            padding: 18px;
+            padding:18px;
         }
 
         .today-summary {
-            padding: 18px;
-            margin-bottom: 16px;
+            padding:18px;
+            margin-bottom:16px;
         }
 
         .summary-head {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
         }
 
         .summary-title {
-            font-size: 20px;
-            font-weight: 800;
-            letter-spacing: -0.2px;
+            font-size:20px;
+            font-weight:800;
+            letter-spacing:-0.2px;
         }
 
         .summary-sub {
-            margin-top: 4px;
-            font-size: 13px;
-            color: var(--muted);
+            margin-top:4px;
+            font-size:13px;
+            color:var(--muted);
         }
 
         .summary-btn {
-            background: var(--brand);
-            color: #fff;
-            border: none;
-            border-radius: 12px;
-            padding: 10px 14px;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
+            background:var(--brand);
+            color:#fff;
+            border:none;
+            border-radius:12px;
+            padding:10px 14px;
+            font-size:13px;
+            font-weight:700;
+            cursor:pointer;
         }
 
         .summary-grid {
-            margin-top: 14px;
-            display: grid;
+            margin-top:14px;
+            display:grid;
             grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
-            gap: 12px;
+            gap:12px;
         }
 
         .summary-card {
-            background: var(--card-2);
-            border: 1px solid var(--line);
-            border-radius: 16px;
-            padding: 14px;
+            background:var(--card-2);
+            border:1px solid var(--line);
+            border-radius:16px;
+            padding:14px;
         }
 
         .summary-label {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: .7px;
-            color: var(--muted);
-            font-weight: 700;
+            font-size:11px;
+            text-transform:uppercase;
+            letter-spacing:.7px;
+            color:var(--muted);
+            font-weight:700;
         }
 
         .summary-value {
-            margin-top: 6px;
-            font-size: 18px;
-            font-weight: 800;
-            line-height: 1.25;
+            margin-top:6px;
+            font-size:18px;
+            font-weight:800;
+            line-height:1.25;
         }
 
         .summary-meta {
-            margin-top: 6px;
-            font-size: 12px;
-            color: var(--muted);
-            line-height: 1.4;
+            margin-top:6px;
+            font-size:12px;
+            color:var(--muted);
+            line-height:1.4;
         }
 
         .section-head {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            margin-bottom: 8px;
-            cursor: pointer;
-            user-select: none;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+            margin-bottom:8px;
+            cursor:pointer;
+            user-select:none;
         }
 
         .section-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            display:flex;
+            align-items:center;
+            gap:12px;
         }
 
         .section-title {
-            font-size: 22px;
-            font-weight: 800;
+            font-size:22px;
+            font-weight:800;
         }
 
         .section-subtitle {
-            font-size: 13px;
-            color: var(--muted);
-            margin-top: 4px;
+            font-size:13px;
+            color:var(--muted);
+            margin-top:4px;
         }
 
         .section-meta {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
+            display:flex;
+            align-items:center;
+            gap:10px;
+            flex-wrap:wrap;
         }
 
         .counter {
-            color: var(--muted);
-            font-size: 13px;
+            color:var(--muted);
+            font-size:13px;
         }
 
         .collapse-btn {
-            border: 1px solid var(--line);
-            background: #f5f8fb;
-            color: var(--text);
-            padding: 8px 10px;
-            border-radius: 10px;
-            font-size: 12px;
-            font-weight: 700;
-            width: auto;
+            border:1px solid var(--line);
+            background:#f5f8fb;
+            color:var(--text);
+            padding:8px 10px;
+            border-radius:10px;
+            font-size:12px;
+            font-weight:700;
+            width:auto;
         }
 
         .month-select {
-            width: auto;
-            min-width: 150px;
-            padding: 8px 10px;
-            border-radius: 10px;
-            font-size: 12px;
-            font-weight: 700;
+            width:auto;
+            min-width:150px;
+            padding:8px 10px;
+            border-radius:10px;
+            font-size:12px;
+            font-weight:700;
         }
 
         .rows {
@@ -671,190 +683,198 @@
         }
 
         .rows.collapsed {
-            display: none;
+            display:none;
         }
 
         .row {
-            display: flex;
-            gap: 12px;
-            align-items: flex-start;
-            padding: 10px 2px;
-            border-bottom: 1px solid var(--line);
+            display:flex;
+            gap:12px;
+            align-items:flex-start;
+            padding:10px 2px;
+            border-bottom:1px solid var(--line);
         }
 
-        .row:last-child {
-            border-bottom: none;
-        }
+        .row:last-child { border-bottom:none; }
 
         .row.conflict {
-            margin: 6px 0;
-            padding: 10px 12px;
-            border: 1px solid var(--conflict-border);
-            border-radius: 14px;
-            background: var(--conflict-bg);
+            margin:6px 0;
+            padding:10px 12px;
+            border:1px solid var(--conflict-border);
+            border-radius:14px;
+            background:var(--conflict-bg);
         }
 
         .row.today {
-            background: var(--today-row-bg);
-            border: 1px solid var(--today-row-border);
-            border-radius: 14px;
-            padding: 10px 12px;
-            margin: 6px 0;
+            background:var(--today-row-bg);
+            border:1px solid var(--today-row-border);
+            border-radius:14px;
+            padding:10px 12px;
+            margin:6px 0;
         }
 
         .avatar {
-            width: 36px;
-            height: 36px;
-            min-width: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #d9e8f3;
-            color: var(--brand);
-            font-size: 12px;
-            font-weight: 800;
-            border: 1px solid #c7d8e5;
+            width:36px;
+            height:36px;
+            min-width:36px;
+            border-radius:50%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            background:#d9e8f3;
+            color:var(--brand);
+            font-size:12px;
+            font-weight:800;
+            border:1px solid #c7d8e5;
         }
 
         .content {
-            flex: 1;
-            min-width: 0;
+            flex:1;
+            min-width:0;
         }
 
         .main-line {
-            font-size: 15px;
-            line-height: 1.3;
-            font-weight: 800;
-            word-break: break-word;
+            font-size:15px;
+            line-height:1.3;
+            font-weight:800;
+            word-break:break-word;
         }
 
         .meta {
-            margin-top: 3px;
-            font-size: 12px;
-            line-height: 1.35;
-            color: var(--muted);
+            margin-top:3px;
+            font-size:12px;
+            line-height:1.35;
+            color:var(--muted);
         }
 
         .badges {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-top: 6px;
+            display:flex;
+            flex-wrap:wrap;
+            gap:6px;
+            margin-top:6px;
         }
 
         .badge {
-            padding: 4px 8px;
-            border-radius: 999px;
-            font-size: 11px;
-            font-weight: 700;
-            border: 1px solid transparent;
-            background: #eef4f8;
-            color: var(--brand);
+            padding:4px 8px;
+            border-radius:999px;
+            font-size:11px;
+            font-weight:700;
+            border:1px solid transparent;
+            background:#eef4f8;
+            color:var(--brand);
         }
 
         .badge.conflict {
-            background: var(--conflict-bg);
-            color: var(--conflict-text);
-            border-color: var(--conflict-border);
+            background:var(--conflict-bg);
+            color:var(--conflict-text);
+            border-color:var(--conflict-border);
         }
 
         .badge.vacation {
-            background: var(--vacation-bg);
-            color: var(--vacation-text);
-            border-color: var(--vacation-border);
+            background:var(--vacation-bg);
+            color:var(--vacation-text);
+            border-color:var(--vacation-border);
         }
 
         .badge.holiday {
-            background: var(--holiday-bg);
-            color: var(--holiday-text);
-            border-color: var(--holiday-border);
+            background:var(--holiday-bg);
+            color:var(--holiday-text);
+            border-color:var(--holiday-border);
         }
 
         .badge.ok {
-            background: var(--ok-bg);
-            color: var(--ok-text);
+            background:var(--ok-bg);
+            color:var(--ok-text);
         }
 
         .badge.warn {
-            background: var(--warn-bg);
-            color: var(--warn-text);
+            background:var(--warn-bg);
+            color:var(--warn-text);
         }
 
         .badge.today {
-            background: var(--brand-soft);
-            color: var(--brand);
-            border-color: #cfe2f0;
+            background:var(--brand-soft);
+            color:var(--brand);
+            border-color:#cfe2f0;
         }
 
         .empty {
-            color: var(--muted);
-            padding-top: 4px;
+            color:var(--muted);
+            padding-top:4px;
         }
 
         .loader {
-            color: var(--muted);
+            color:var(--muted);
         }
 
         .error-box {
-            background: var(--conflict-bg);
-            color: var(--conflict-text);
-            border: 1px solid var(--conflict-border);
-            border-radius: 14px;
-            padding: 12px 14px;
+            background:var(--conflict-bg);
+            color:var(--conflict-text);
+            border:1px solid var(--conflict-border);
+            border-radius:14px;
+            padding:12px 14px;
+        }
+
+        .upload-box {
+            text-align:center;
+            padding:26px 18px;
+        }
+
+        .upload-box h3 {
+            margin:0 0 8px;
+            font-size:24px;
+        }
+
+        .upload-box p {
+            margin:0;
+            color:var(--muted);
+            line-height:1.5;
+        }
+
+        .upload-actions {
+            margin-top:18px;
+            display:flex;
+            justify-content:center;
+            gap:10px;
+            flex-wrap:wrap;
         }
 
         mark {
-            background: #e7efff;
-            color: inherit;
-            border-radius: 4px;
-            padding: 0 2px;
+            background:#e7efff;
+            color:inherit;
+            border-radius:4px;
+            padding:0 2px;
         }
 
-        @media (max-width: 1200px) {
+        @media (max-width:1200px) {
             .header-grid {
                 grid-template-columns:1fr;
             }
-
             .header-grid .now {
-                grid-column: 1 / -1;
+                grid-column:1 / -1;
             }
         }
 
-        @media (max-width: 900px) {
+        @media (max-width:900px) {
             .header-grid {
                 grid-template-columns:1fr;
             }
         }
 
-        @media (max-width: 700px) {
-            .container {
-                padding: 14px;
+        @media (max-width:700px) {
+            .container { padding:14px; }
+            .hero h1 { font-size:34px; }
+            .now-time { font-size:46px; }
+            .toolbar { align-items:stretch; }
+            .search-wrap { max-width:none; width:100%; }
+            .section-meta { width:100%; }
+            .month-select { width:100%; }
+            .hero-top {
+                flex-direction:column;
+                align-items:flex-start;
             }
-
-            .hero h1 {
-                font-size: 34px;
-            }
-
-            .now-time {
-                font-size: 46px;
-            }
-
-            .toolbar {
-                align-items: stretch;
-            }
-
-            .search-wrap {
-                max-width: none;
-                width: 100%;
-            }
-
-            .section-meta {
-                width: 100%;
-            }
-
-            .month-select {
-                width: 100%;
+            .hero-actions {
+                align-items:flex-start;
+                width:100%;
             }
         }
     </style>
@@ -862,10 +882,9 @@
 <body>
 <div id="login" class="login">
     <div class="login-box">
-        <img class="login-logo" src="sibur-logo.png" alt="СИБУР"
-             onerror="this.style.display='none'; this.parentElement.classList.add('logo-fallback')"/>
+        <img class="login-logo" src="sibur-logo.png" alt="СИБУР" onerror="this.style.display='none'; this.parentElement.classList.add('logo-fallback')" />
         <h2>Графики</h2>
-        <input id="pass" type="password" placeholder="Пароль"/>
+        <input id="pass" type="password" placeholder="Пароль" />
         <button onclick="login()">Войти</button>
         <div id="err" class="hidden" style="margin-top:12px;color:#64748b;font-size:13px;">Неверный пароль</div>
     </div>
@@ -873,30 +892,31 @@
 
 <div id="app" class="hidden">
     <div class="container">
-
         <div class="panel header-panel">
             <div class="header-grid">
                 <div class="panel hero">
                     <div class="hero-top">
                         <div>
-                            <img class="logo" src="sibur-intech.png" alt="СИБУРИНТЕХ"
-                                 onerror="this.style.display='none'; this.parentElement.classList.add('logo-fallback-inner')"/>
+                            <img class="logo" src="sibur-intech.png" alt="СИБУРИНТЕХ" onerror="this.style.display='none'; this.parentElement.classList.add('logo-fallback-inner')" />
                             <h1>Графики</h1>
-                            <p class="hero-sub">Единая страница расписания, дежурств и отпусков</p>
+                            <p class="hero-sub">Единая страница дежурств, расписания и отпусков</p>
                         </div>
-                        <div>
-                            <button onclick="load()" style="width:auto;">Обновить</button>
+
+                        <div class="hero-actions">
+                            <button type="button" onclick="openFilePicker()">Загрузить Excel</button>
+                            <button type="button" class="secondary-btn" onclick="clearWorkbook()">Сбросить данные</button>
+                            <div id="fileChip" class="chip file-chip hidden"></div>
                         </div>
                     </div>
+
+                    <input id="xlsxFile" type="file" accept=".xlsx,.xls" class="hidden" />
                     <div id="dateInfo" class="hero-date-info"></div>
                 </div>
 
                 <div class="panel now">
                     <div class="now-label">Сейчас</div>
                     <div id="nowDate" class="now-date">—</div>
-                    <div class="now-time-wrap">
-                        <div id="nowTime" class="now-time">--:--</div>
-                    </div>
+                    <div class="now-time-wrap"><div id="nowTime" class="now-time">--:--</div></div>
                     <div id="nowMeta" class="now-meta"></div>
                 </div>
 
@@ -911,14 +931,9 @@
                     <div id="calendarWeekdays" class="calendar-grid"></div>
                     <div id="calendarDays" class="calendar-grid"></div>
                     <div class="calendar-legend">
-                        <div class="legend-item"><span class="legend-dot"
-                                                       style="background:var(--vacation-text)"></span><span>Отпуск</span>
-                        </div>
-                        <div class="legend-item"><span class="legend-dot"
-                                                       style="background:var(--conflict-text)"></span><span>Замена</span>
-                        </div>
-                        <div class="legend-item"><span class="legend-dot" style="background:var(--holiday-text)"></span><span>Праздник</span>
-                        </div>
+                        <div class="legend-item"><span class="legend-dot" style="background:var(--vacation-text)"></span><span>Отпуск</span></div>
+                        <div class="legend-item"><span class="legend-dot" style="background:var(--conflict-text)"></span><span>Замена</span></div>
+                        <div class="legend-item"><span class="legend-dot" style="background:var(--holiday-text)"></span><span>Праздник</span></div>
                     </div>
                 </div>
             </div>
@@ -950,23 +965,22 @@
 
         <div id="content">
             <div class="panel card">
-                <div class="loader">Загрузка данных...</div>
+                <div class="loader">Загрузите Excel-файл</div>
             </div>
         </div>
-
     </div>
 </div>
 
 <script>
     const PASSWORD = "2305";
 
-    const CSV = {
-        watch: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_j9JH9OK3SyTfOF0dtATg3M-eBFtfW5Cv3jorD1fTU6VcIQTAPhlkExjG6bUAnT2tNAzMmtO1PRci/pub?gid=1954389003&single=true&output=csv",
-        tours: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_j9JH9OK3SyTfOF0dtATg3M-eBFtfW5Cv3jorD1fTU6VcIQTAPhlkExjG6bUAnT2tNAzMmtO1PRci/pub?gid=1910645083&single=true&output=csv",
-        schedule: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_j9JH9OK3SyTfOF0dtATg3M-eBFtfW5Cv3jorD1fTU6VcIQTAPhlkExjG6bUAnT2tNAzMmtO1PRci/pub?gid=2107515437&single=true&output=csv",
-        vacation: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_j9JH9OK3SyTfOF0dtATg3M-eBFtfW5Cv3jorD1fTU6VcIQTAPhlkExjG6bUAnT2tNAzMmtO1PRci/pub?gid=899395990&single=true&output=csv",
-        holidays: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_j9JH9OK3SyTfOF0dtATg3M-eBFtfW5Cv3jorD1fTU6VcIQTAPhlkExjG6bUAnT2tNAzMmtO1PRci/pub?gid=72554172&single=true&output=csv",
-        visits: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_j9JH9OK3SyTfOF0dtATg3M-eBFtfW5Cv3jorD1fTU6VcIQTAPhlkExjG6bUAnT2tNAzMmtO1PRci/pub?gid=933327664&single=true&output=csv"
+    const SHEET_ALIASES = {
+        watch: ["Вахта"],
+        tours: ["Экскурсии"],
+        schedule: ["Расписание"],
+        vacation: ["Отпуска", "Отпуск"],
+        holidays: ["Праздники", "Праздник"],
+        visits: ["Визиты", "Визит"]
     };
 
     let state = {
@@ -976,6 +990,8 @@
         calendarYear: new Date().getFullYear(),
         calendarMonth: new Date().getMonth(),
         nowIntervalId: null,
+        hasWorkbook: false,
+        workbookName: "",
         collapsed: {
             watch: false,
             tours: false,
@@ -985,17 +1001,22 @@
         },
         monthFilter: {
             watch: "all",
-            tours: "all"
+            tours: "all",
+            visits: "all"
         },
-        data: {
+        data: emptyData()
+    };
+
+    function emptyData() {
+        return {
             watch: [],
             tours: [],
             schedule: [],
             vacation: [],
             holidays: [],
             visits: []
-        }
-    };
+        };
+    }
 
     function login() {
         const passInput = document.getElementById("pass");
@@ -1007,10 +1028,29 @@
             err.classList.add("hidden");
             loginDiv.style.display = "none";
             appDiv.classList.remove("hidden");
-            load();
+            renderNowCard();
+            render();
+            if (state.nowIntervalId) clearInterval(state.nowIntervalId);
+            state.nowIntervalId = setInterval(renderNowCard, 1000);
         } else {
             err.classList.remove("hidden");
         }
+    }
+
+    function openFilePicker() {
+        document.getElementById("xlsxFile").click();
+    }
+
+    function clearWorkbook() {
+        state.hasWorkbook = false;
+        state.workbookName = "";
+        state.selectedDate = "";
+        state.search = "";
+        state.data = emptyData();
+        document.getElementById("searchInput").value = "";
+        document.getElementById("xlsxFile").value = "";
+        updateFileChip();
+        render();
     }
 
     function setView(view, el) {
@@ -1064,58 +1104,6 @@
         renderCalendar();
     }
 
-    function detectDelimiter(headerLine) {
-        const semicolons = (headerLine.match(/;/g) || []).length;
-        const commas = (headerLine.match(/,/g) || []).length;
-        return semicolons > commas ? ";" : ",";
-    }
-
-    function parseCSVLine(line, delimiter) {
-        const result = [];
-        let current = "";
-        let insideQuotes = false;
-
-        for (let i = 0; i < line.length; i++) {
-            const char = line[i];
-            const nextChar = line[i + 1];
-
-            if (char === '"') {
-                if (insideQuotes && nextChar === '"') {
-                    current += '"';
-                    i++;
-                } else {
-                    insideQuotes = !insideQuotes;
-                }
-            } else if (char === delimiter && !insideQuotes) {
-                result.push(current.trim());
-                current = "";
-            } else {
-                current += char;
-            }
-        }
-
-        result.push(current.trim());
-        return result.map(v => v.replace(/^"|"$/g, "").trim());
-    }
-
-    function parse(text) {
-        const cleanText = text.replace(/\r/g, "").trim();
-        if (!cleanText) return [];
-
-        const lines = cleanText.split("\n").filter(line => line.trim() !== "");
-        if (lines.length <= 1) return [];
-
-        const delimiter = detectDelimiter(lines[0]);
-        const headers = parseCSVLine(lines[0], delimiter).map(h => String(h).trim().toLowerCase());
-
-        return lines.slice(1).map(line => {
-            const values = parseCSVLine(line, delimiter);
-            const obj = {};
-            headers.forEach((h, i) => obj[h] = values[i] || "");
-            return obj;
-        });
-    }
-
     function safe(value) {
         if (value === undefined || value === null) return "";
         return String(value).trim();
@@ -1147,8 +1135,34 @@
         return (parts[0][0] + (parts[1]?.[0] || "")).toUpperCase();
     }
 
+    function shortName(text) {
+        const value = safe(text);
+        if (!value) return "";
+        const parts = value.match(/[A-Za-zА-Яа-яЁё]+/g);
+        if (!parts || !parts.length) return value;
+        return parts.map(part => part[0]).join("").toUpperCase();
+    }
+
+    function formatDateRu(date) {
+        const d = String(date.getDate()).padStart(2, "0");
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const y = date.getFullYear();
+        return `${d}.${m}.${y}`;
+    }
+
+    function normalizeDateText(text) {
+        return safe(text).replace(/\b(\d{1,2})\/(\d{1,2})\/(\d{2,4})\b/g, (_, m, d, y) => {
+            const year = y.length === 2 ? `20${y}` : y;
+            return `${String(d).padStart(2, "0")}.${String(m).padStart(2, "0")}.${year}`;
+        });
+    }
+
     function parseDate(value) {
-        const v = safe(value);
+        if (value instanceof Date && !isNaN(value)) {
+            return new Date(value.getFullYear(), value.getMonth(), value.getDate());
+        }
+
+        const v = normalizeDateText(safe(value));
         if (!v) return null;
 
         if (/^\d{2}\.\d{2}\.\d{4}$/.test(v)) {
@@ -1241,96 +1255,6 @@
         render();
     }
 
-    function renderTodaySummary() {
-        const el = document.getElementById("todaySummary");
-        if (!el) return;
-
-        const todayKey = dateKey(new Date());
-        const todayText = formatDateKey(todayKey);
-
-        const watchRows = state.data.watch.filter(row => {
-            const d = parseDate(row["дата"]);
-            return d && dateKey(d) === todayKey;
-        });
-
-        const toursRows = state.data.tours.filter(row => {
-            const d = parseDate(row["дата"]);
-            return d && dateKey(d) === todayKey;
-        });
-
-        const scheduleRow = state.data.schedule.find(row => isTodayInPeriod(row["период"]));
-
-        const visitsRows = state.data.visits.filter(row => isTodayDate(row["дата"]));
-
-        const vacationRows = state.data.vacation.filter(row => {
-            const start = parseDate(row["начало"]);
-            const end = parseDate(row["конец"]);
-            if (!start || !end) return false;
-            const t = startOfDay(new Date()).getTime();
-            return t >= startOfDay(start).getTime() && t <= startOfDay(end).getTime();
-        });
-
-        const watchNames = watchRows.map(finalPerson).filter(Boolean);
-        const toursNames = toursRows.map(finalPerson).filter(Boolean);
-
-        const watchConflicts = watchRows.filter(row => {
-            const status = safe(row["статус"]).toLowerCase();
-            return status.includes("замена") || status.includes("отпуск") || safe(row["замена"]);
-        }).length;
-
-        const toursConflicts = toursRows.filter(row => {
-            const status = safe(row["статус"]).toLowerCase();
-            return status.includes("замена") || status.includes("отпуск") || safe(row["замена"]);
-        }).length;
-
-        const schedulePerson = scheduleRow ? finalPerson(scheduleRow) : "";
-        const schedulePeriod = scheduleRow ? safe(scheduleRow["период"]) : "";
-
-        const visitsList = visitsRows.map(row =>
-            safe(row["компания"]) || safe(row["гости"]) || safe(row["тема"]) || safe(row["комментарии"]) || ""
-        ).filter(Boolean);
-
-        const vacationNames = vacationRows.map(row => safe(row["фио"]))
-            .filter(Boolean);
-
-        el.innerHTML = `
-        <div class="summary-head">
-          <div>
-            <div class="summary-title">Сегодня</div>
-            <div class="summary-sub">${todayText}</div>
-          </div>
-          <button class="summary-btn" type="button" onclick="goToToday()">Показать в списках</button>
-        </div>
-        <div class="summary-grid">
-          <div class="summary-card">
-            <div class="summary-label">Вахта</div>
-            <div class="summary-value">${escapeHtml(formatList(watchNames, "Нет назначений"))}</div>
-            <div class="summary-meta">${watchConflicts ? `Конфликтов: ${watchConflicts}` : ""}</div>
-          </div>
-          <div class="summary-card">
-            <div class="summary-label">Экскурсии</div>
-            <div class="summary-value">${escapeHtml(formatList(toursNames, "Нет назначений"))}</div>
-            <div class="summary-meta">${toursConflicts ? `Конфликтов: ${toursConflicts}` : ""}</div>
-          </div>
-          <div class="summary-card">
-            <div class="summary-label">Расписание</div>
-            <div class="summary-value">${escapeHtml(schedulePerson || "Не назначено")}</div>
-            <div class="summary-meta">${escapeHtml(schedulePeriod)}</div>
-          </div>
-          <div class="summary-card">
-            <div class="summary-label">Визиты</div>
-            <div class="summary-value">${visitsRows.length ? `${visitsRows.length} визит(ов)` : "Нет визитов"}</div>
-            <div class="summary-meta">${escapeHtml(formatList(visitsList, "—"))}</div>
-          </div>
-          <div class="summary-card">
-            <div class="summary-label">Отпуска</div>
-            <div class="summary-value">${vacationRows.length ? `${vacationRows.length} в отпуске` : "Нет"}</div>
-            <div class="summary-meta">${escapeHtml(formatList(vacationNames, "—"))}</div>
-          </div>
-        </div>
-      `;
-    }
-
     function getHolidayMap() {
         const map = {};
         state.data.holidays.forEach(row => {
@@ -1346,7 +1270,7 @@
         const holidayMap = getHolidayMap();
 
         function ensure(key) {
-            if (!map[key]) map[key] = {vacation: false, conflict: false, holiday: false};
+            if (!map[key]) map[key] = { vacation: false, conflict: false, holiday: false };
             return map[key];
         }
 
@@ -1386,6 +1310,7 @@
 
             let d = startOfDay(period.start);
             const finish = startOfDay(period.end);
+
             while (d <= finish) {
                 ensure(dateKey(d)).conflict = true;
                 d = new Date(d);
@@ -1430,7 +1355,7 @@
         for (let day = 1; day <= daysInMonth; day++) {
             const date = new Date(year, month, day);
             const key = dateKey(date);
-            const flags = dataMap[key] || {vacation: false, conflict: false, holiday: false};
+            const flags = dataMap[key] || { vacation: false, conflict: false, holiday: false };
             const isToday = key === todayKey;
             const isSelected = key === state.selectedDate;
 
@@ -1457,6 +1382,11 @@
 
         const holidayMap = getHolidayMap();
 
+        if (!state.hasWorkbook) {
+            el.innerHTML = `<span class="chip today">Выбери Excel-файл для загрузки</span>`;
+            return;
+        }
+
         if (!state.selectedDate) {
             el.innerHTML = `<span class="chip today">Выбери день в календаре</span>`;
             return;
@@ -1471,40 +1401,118 @@
         el.innerHTML = chips.join("");
     }
 
-    function computeStats() {
-        const today = new Date();
-        const todayKey = dateKey(today);
+    function rowValue(row, key) {
+        return safe(row[key]);
+    }
 
-        const vacationNow = state.data.vacation.filter(row => {
+    function finalPerson(row) {
+        return rowValue(row, "итог") || rowValue(row, "замена") || rowValue(row, "назначен");
+    }
+
+    function finalPersonShort(row) {
+        return shortName(finalPerson(row));
+    }
+
+    function renderTodaySummary() {
+        const el = document.getElementById("todaySummary");
+        if (!el) return;
+
+        if (!state.hasWorkbook) {
+            el.innerHTML = `
+          <div class="summary-head">
+            <div>
+              <div class="summary-title">Шаг 1: локальная загрузка Excel</div>
+              <div class="summary-sub">Данные пока никуда не отправляются. После обновления страницы файл нужно выбрать заново.</div>
+            </div>
+            <button class="summary-btn" type="button" onclick="openFilePicker()">Выбрать файл</button>
+          </div>
+        `;
+            return;
+        }
+
+        const todayKey = dateKey(new Date());
+        const todayText = formatDateKey(todayKey);
+
+        const watchRows = state.data.watch.filter(row => {
+            const d = parseDate(row["дата"]);
+            return d && dateKey(d) === todayKey;
+        });
+
+        const toursRows = state.data.tours.filter(row => {
+            const d = parseDate(row["дата"]);
+            return d && dateKey(d) === todayKey;
+        });
+
+        const scheduleRow = state.data.schedule.find(row => isTodayInPeriod(row["период"]));
+
+        const visitsRows = state.data.visits.filter(row => isTodayDate(row["дата"]));
+
+        const vacationRows = state.data.vacation.filter(row => {
             const start = parseDate(row["начало"]);
             const end = parseDate(row["конец"]);
             if (!start || !end) return false;
-            const t = startOfDay(today).getTime();
+            const t = startOfDay(new Date()).getTime();
             return t >= startOfDay(start).getTime() && t <= startOfDay(end).getTime();
+        });
+
+        const watchNames = watchRows.map(finalPersonShort).filter(Boolean);
+        const toursNames = toursRows.map(finalPersonShort).filter(Boolean);
+
+        const watchConflicts = watchRows.filter(row => {
+            const status = rowValue(row, "статус").toLowerCase();
+            return status.includes("замена") || status.includes("отпуск") || rowValue(row, "замена");
         }).length;
 
-        const conflictsToday =
-            state.data.watch.filter(row => {
-                const d = parseDate(row["дата"]);
-                if (!d) return false;
-                return dateKey(d) === todayKey &&
-                    (safe(row["статус"]).toLowerCase().includes("замена") ||
-                        safe(row["статус"]).toLowerCase().includes("отпуск") ||
-                        safe(row["замена"]));
-            }).length;
+        const toursConflicts = toursRows.filter(row => {
+            const status = rowValue(row, "статус").toLowerCase();
+            return status.includes("замена") || status.includes("отпуск") || rowValue(row, "замена");
+        }).length;
 
-        const holidayMap = getHolidayMap();
+        const schedulePerson = scheduleRow ? finalPersonShort(scheduleRow) : "";
+        const schedulePeriod = scheduleRow ? rowValue(scheduleRow, "период") : "";
 
-        return {
-            watch: state.data.watch.length,
-            tours: state.data.tours.length,
-            schedule: state.data.schedule.length,
-            vacation: state.data.vacation.length,
-            vacationNow,
-            conflictsToday,
-            holidayToday: holidayMap[todayKey] || "",
-            selectedDate: state.selectedDate ? formatDateKey(state.selectedDate) : "Не выбрана"
-        };
+        const visitsList = visitsRows.map(row =>
+            shortName(rowValue(row, "гости")) || rowValue(row, "компания") || rowValue(row, "тема") || rowValue(row, "комментарии") || ""
+        ).filter(Boolean);
+
+        const vacationNames = vacationRows.map(row => shortName(rowValue(row, "фио"))).filter(Boolean);
+
+        el.innerHTML = `
+        <div class="summary-head">
+          <div>
+            <div class="summary-title">Сегодня</div>
+            <div class="summary-sub">${todayText}</div>
+          </div>
+          <button class="summary-btn" type="button" onclick="goToToday()">Показать в списках</button>
+        </div>
+        <div class="summary-grid">
+          <div class="summary-card">
+            <div class="summary-label">Вахта</div>
+            <div class="summary-value">${escapeHtml(formatList(watchNames, "Нет назначений"))}</div>
+            <div class="summary-meta">${watchConflicts ? `Конфликтов: ${watchConflicts}` : ""}</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-label">Экскурсии</div>
+            <div class="summary-value">${escapeHtml(formatList(toursNames, "Нет назначений"))}</div>
+            <div class="summary-meta">${toursConflicts ? `Конфликтов: ${toursConflicts}` : ""}</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-label">Расписание</div>
+            <div class="summary-value">${escapeHtml(schedulePerson || "Не назначено")}</div>
+            <div class="summary-meta">${escapeHtml(schedulePeriod)}</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-label">Визиты</div>
+            <div class="summary-value">${visitsRows.length ? `${visitsRows.length} визит(ов)` : "Нет визитов"}</div>
+            <div class="summary-meta">${escapeHtml(formatList(visitsList, "—"))}</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-label">Отпуска</div>
+            <div class="summary-value">${vacationRows.length ? `${vacationRows.length} в отпуске` : "Нет"}</div>
+            <div class="summary-meta">${escapeHtml(formatList(vacationNames, "—"))}</div>
+          </div>
+        </div>
+      `;
     }
 
     function renderNowCard() {
@@ -1524,10 +1532,14 @@
         const year = now.getFullYear();
         const hh = String(now.getHours()).padStart(2, "0");
         const mm = String(now.getMinutes()).padStart(2, "0");
-        const ss = String(now.getSeconds()).padStart(2, "0");
 
         nowDateEl.textContent = `${day} ${month} ${year} г.`;
         nowTimeEl.textContent = `${hh}:${mm}`;
+
+        if (!state.hasWorkbook) {
+            nowMetaEl.innerHTML = `<span class="now-pill">Загрузите Excel-файл</span>`;
+            return;
+        }
 
         const todayStart = startOfDay(now).getTime();
         const upcoming = state.data.holidays
@@ -1536,7 +1548,7 @@
                 if (!d) return null;
                 const ts = startOfDay(d).getTime();
                 if (ts < todayStart) return null;
-                return {date: d, name: row["название"] || "Праздник"};
+                return { date: d, name: row["название"] || "Праздник" };
             })
             .filter(Boolean)
             .sort((a, b) => a.date - b.date)[0];
@@ -1549,42 +1561,8 @@
         }
     }
 
-    function renderStats() {
-        const el = document.getElementById("statsGrid");
-        if (!el) return;
-
-        const stats = computeStats();
-
-        el.innerHTML = `
-        <div class="panel stat">
-          <div class="stat-label">Вахта</div>
-          <div class="stat-value">${stats.watch}</div>
-          <div class="stat-sub">Рабочие дни</div>
-        </div>
-        <div class="panel stat">
-          <div class="stat-label">Экскурсии</div>
-          <div class="stat-value">${stats.tours}</div>
-          <div class="stat-sub">Ежедневные назначения</div>
-        </div>
-        <div class="panel stat">
-          <div class="stat-label">Сейчас в отпуске</div>
-          <div class="stat-value">${stats.vacationNow}</div>
-          <div class="stat-sub">Активные отпускные периоды</div>
-        </div>
-        <div class="panel stat">
-          <div class="stat-label">Выбранная дата</div>
-          <div class="stat-value" style="font-size:22px;">${stats.selectedDate}</div>
-          <div class="stat-sub">Оперативный срез по дню</div>
-        </div>
-      `;
-    }
-
-    function finalPerson(row) {
-        return safe(row["итог"]) || safe(row["замена"]) || safe(row["назначен"]);
-    }
-
     function rowMonthValue(row) {
-        return safe(row["месяц"]);
+        return rowValue(row, "месяц");
     }
 
     function getMonthNamesRu() {
@@ -1608,7 +1586,7 @@
       `;
     }
 
-    function renderRow({avatarText, main, meta, badges = [], conflict = false, today = false}) {
+    function renderRow({ avatarText, main, meta, badges = [], conflict = false, today = false }) {
         return `
         <div class="row ${conflict ? "conflict" : ""} ${today ? "today" : ""}">
           <div class="avatar">${escapeHtml(getInitials(avatarText))}</div>
@@ -1670,6 +1648,25 @@
     }
 
     function render() {
+        updateFileChip();
+        renderTodaySummary();
+        renderSelectedDateInfo();
+        renderCalendar();
+        renderNowCard();
+
+        if (!state.hasWorkbook) {
+            document.getElementById("content").innerHTML = `
+          <div class="panel card upload-box">
+            <h3>Загрузите Excel-файл</h3>
+            <p>На этом шаге сайт работает локально с одним файлом Excel и не использует Google Sheets.</p>
+            <div class="upload-actions">
+              <button type="button" onclick="openFilePicker()">Выбрать Excel</button>
+            </div>
+          </div>
+        `;
+            return;
+        }
+
         const holidayMap = getHolidayMap();
         let html = "";
 
@@ -1707,9 +1704,9 @@
                 "Рабочие дни, отдельный пул сотрудников",
                 watchRows,
                 row => {
-                    const date = safe(row["дата"]);
-                    const status = safe(row["статус"]);
-                    const conflict = !!safe(row["замена"]) || status.toLowerCase().includes("замена") || status.toLowerCase().includes("отпуск");
+                    const date = rowValue(row, "дата");
+                    const status = rowValue(row, "статус");
+                    const conflict = !!rowValue(row, "замена") || status.toLowerCase().includes("замена") || status.toLowerCase().includes("отпуск");
                     const dateObj = parseDate(date);
                     const holiday = dateObj ? holidayMap[dateKey(dateObj)] : "";
                     const isToday = isTodayDate(date);
@@ -1721,12 +1718,12 @@
                     if (isToday) badges.push("Сегодня");
 
                     return renderRow({
-                        avatarText: finalPerson(row),
-                        main: `${highlight(date)} — ${highlight(finalPerson(row))}`,
+                        avatarText: finalPersonShort(row),
+                        main: `${highlight(date)} — ${highlight(finalPersonShort(row))}`,
                         meta: [
-                            safe(row["день"]),
-                            safe(row["замена"]) ? `Замена: ${safe(row["замена"])}` : "",
-                            safe(row["комментарий"])
+                            rowValue(row, "день"),
+                            rowValue(row, "замена") ? `Замена: ${shortName(rowValue(row, "замена"))}` : "",
+                            rowValue(row, "комментарий")
                         ].filter(Boolean).map(highlight).join(" · "),
                         badges,
                         conflict,
@@ -1744,9 +1741,9 @@
                 "Каждый рабочий день, общий пул сотрудников",
                 toursRows,
                 row => {
-                    const date = safe(row["дата"]);
-                    const status = safe(row["статус"]);
-                    const conflict = !!safe(row["замена"]) || status.toLowerCase().includes("замена") || status.toLowerCase().includes("отпуск");
+                    const date = rowValue(row, "дата");
+                    const status = rowValue(row, "статус");
+                    const conflict = !!rowValue(row, "замена") || status.toLowerCase().includes("замена") || status.toLowerCase().includes("отпуск");
                     const dateObj = parseDate(date);
                     const holiday = dateObj ? holidayMap[dateKey(dateObj)] : "";
                     const isToday = isTodayDate(date);
@@ -1758,12 +1755,12 @@
                     if (isToday) badges.push("Сегодня");
 
                     return renderRow({
-                        avatarText: finalPerson(row),
-                        main: `${highlight(date)} — ${highlight(finalPerson(row))}`,
+                        avatarText: finalPersonShort(row),
+                        main: `${highlight(date)} — ${highlight(finalPersonShort(row))}`,
                         meta: [
-                            safe(row["день"]),
-                            safe(row["замена"]) ? `Замена: ${safe(row["замена"])}` : "",
-                            safe(row["комментарий"])
+                            rowValue(row, "день"),
+                            rowValue(row, "замена") ? `Замена: ${shortName(rowValue(row, "замена"))}` : "",
+                            rowValue(row, "комментарий")
                         ].filter(Boolean).map(highlight).join(" · "),
                         badges,
                         conflict,
@@ -1781,9 +1778,9 @@
                 "Один ответственный на рабочую неделю",
                 scheduleRows,
                 row => {
-                    const status = safe(row["статус"]);
-                    const conflict = !!safe(row["замена"]) || status.toLowerCase().includes("замена") || status.toLowerCase().includes("отпуск");
-                    const isToday = isTodayInPeriod(row["период"]);
+                    const status = rowValue(row, "статус");
+                    const conflict = !!rowValue(row, "замена") || status.toLowerCase().includes("замена") || status.toLowerCase().includes("отпуск");
+                    const isToday = isTodayInPeriod(rowValue(row, "период"));
 
                     const badges = [];
                     if (status) badges.push(status === "ОК" ? "ОК" : "Замена");
@@ -1791,12 +1788,12 @@
                     if (isToday) badges.push("Сегодня");
 
                     return renderRow({
-                        avatarText: finalPerson(row),
-                        main: `Неделя ${highlight(row["неделя"])} — ${highlight(finalPerson(row))}`,
+                        avatarText: finalPersonShort(row),
+                        main: `Неделя ${highlight(rowValue(row, "неделя"))} — ${highlight(finalPersonShort(row))}`,
                         meta: [
-                            safe(row["период"]),
-                            safe(row["замена"]) ? `Замена: ${safe(row["замена"])}` : "",
-                            safe(row["комментарий"])
+                            rowValue(row, "период"),
+                            rowValue(row, "замена") ? `Замена: ${shortName(rowValue(row, "замена"))}` : "",
+                            rowValue(row, "комментарий")
                         ].filter(Boolean).map(highlight).join(" · "),
                         badges,
                         conflict,
@@ -1813,9 +1810,9 @@
                 "Годовой список отпускных периодов",
                 vacationRows,
                 row => renderRow({
-                    avatarText: safe(row["фио"]),
-                    main: `${highlight(row["фио"])}`,
-                    meta: [`${highlight(row["начало"])} → ${highlight(row["конец"])}`],
+                    avatarText: shortName(rowValue(row, "фио")),
+                    main: `${highlight(shortName(rowValue(row, "фио")))}`,
+                    meta: [`${highlight(rowValue(row, "начало"))} → ${highlight(rowValue(row, "конец"))}`],
                     badges: ["Отпуск"],
                     conflict: false
                 })
@@ -1834,8 +1831,8 @@
                 "Ручной ввод посещений и встреч",
                 visitsRows,
                 row => {
-                    const date = safe(row["дата"]);
-                    const person = safe(row["компания"]) || safe(row["гости"]) || safe(row["тема"]) || "";
+                    const date = rowValue(row, "дата");
+                    const person = shortName(rowValue(row, "гости")) || rowValue(row, "компания") || rowValue(row, "тема") || "";
                     const isToday = isTodayDate(date);
 
                     const badges = [];
@@ -1845,9 +1842,9 @@
                         avatarText: person || date,
                         main: `${highlight(date)} — ${highlight(person)}`,
                         meta: [
-                            safe(row["гости"]) ? `Гости: ${safe(row["гости"])}` : "",
-                            safe(row["тема"]) ? `Тема: ${safe(row["тема"])}` : "",
-                            safe(row["комментарии"]) || safe(row["комментарий"])
+                            rowValue(row, "гости") ? `Гости: ${shortName(rowValue(row, "гости"))}` : "",
+                            rowValue(row, "тема") ? `Тема: ${rowValue(row, "тема")}` : "",
+                            rowValue(row, "комментарии") || rowValue(row, "комментарий")
                         ].filter(Boolean).map(highlight).join(" · "),
                         badges,
                         conflict: false,
@@ -1867,76 +1864,161 @@
         }
 
         document.getElementById("content").innerHTML = html;
-        renderTodaySummary();
-        renderSelectedDateInfo();
-        renderCalendar();
-        renderNowCard();
-        renderStats();
     }
 
-    async function loadCsv(url) {
-        if (!url) return "";
-        try {
-            const r = await fetch(url, { cache: "no-store" });
-            if (!r.ok) throw new Error(`HTTP ${r.status}`);
-            const text = await r.text();
-            if (/<!doctype html|<html/i.test(text)) throw new Error("html вместо csv");
-            return text;
-        } catch (e) {
-            try {
-                const proxy = `/netlify/functions/sheets?url=${encodeURIComponent(url)}`;
-                const r2 = await fetch(proxy, { cache: "no-store" });
-                if (!r2.ok) throw new Error(`Proxy HTTP ${r2.status}`);
-                return await r2.text();
-            } catch (e2) {
-                console.error("CSV load failed:", e2);
-                return "";
+    function normalizeHeader(value) {
+        return safe(value).toLowerCase().replace(/\s+/g, " ").trim();
+    }
+
+    function normalizeCellValue(value) {
+        if (value instanceof Date && !isNaN(value)) {
+            return formatDateRu(value);
+        }
+
+        if (typeof value === "number" && value > 30000 && value < 60000 && window.XLSX?.SSF) {
+            const parsed = XLSX.SSF.parse_date_code(value);
+            if (parsed) {
+                return `${String(parsed.d).padStart(2, "0")}.${String(parsed.m).padStart(2, "0")}.${parsed.y}`;
             }
         }
+
+        return normalizeDateText(safe(value));
     }
 
-    async function load() {
+    function normalizeRows(rows) {
+        return rows
+            .map(row => {
+                const next = {};
+                Object.keys(row).forEach(key => {
+                    next[normalizeHeader(key)] = normalizeCellValue(row[key]);
+                });
+                return next;
+            })
+            .filter(row => Object.values(row).some(v => safe(v) !== ""));
+    }
+
+    function normalizeSheetName(value) {
+        return safe(value).toLowerCase().replace(/\s+/g, " ").trim();
+    }
+
+    function findSheetName(workbook, aliases) {
+        const names = workbook.SheetNames || [];
+        const normalizedAliases = aliases.map(normalizeSheetName);
+        return names.find(name => normalizedAliases.includes(normalizeSheetName(name))) || null;
+    }
+
+    function readSheet(workbook, aliases) {
+        const sheetName = findSheetName(workbook, aliases);
+        if (!sheetName) return null;
+
+        const sheet = workbook.Sheets[sheetName];
+        const rows = XLSX.utils.sheet_to_json(sheet, {
+            defval: "",
+            raw: true,
+            dateNF: "dd.mm.yyyy"
+        });
+
+        return normalizeRows(rows);
+    }
+
+    function updateFileChip() {
+        const chip = document.getElementById("fileChip");
+        if (!chip) return;
+
+        if (!state.workbookName) {
+            chip.classList.add("hidden");
+            chip.textContent = "";
+            return;
+        }
+
+        chip.classList.remove("hidden");
+        chip.textContent = state.workbookName;
+    }
+
+    function showLoadError(message) {
+        document.getElementById("content").innerHTML = `
+        <div class="panel card">
+          <div class="error-box">${escapeHtml(message)}</div>
+        </div>
+      `;
+    }
+
+    async function handleWorkbookFile(file) {
+        if (!file) return;
+
+        if (!window.XLSX) {
+            showLoadError("Библиотека чтения Excel не загрузилась. Проверь подключение к интернету или подключи xlsx локально.");
+            return;
+        }
+
         try {
             document.getElementById("content").innerHTML = `
           <div class="panel card">
-            <div class="loader">Загрузка данных...</div>
+            <div class="loader">Чтение Excel-файла...</div>
           </div>
         `;
 
-            const [w, t, s, v, h, vi] = await Promise.all([
-                loadCsv(CSV.watch),
-                loadCsv(CSV.tours),
-                loadCsv(CSV.schedule),
-                loadCsv(CSV.vacation),
-                loadCsv(CSV.holidays),
-                loadCsv(CSV.visits)
-            ]);
+            const buffer = await file.arrayBuffer();
+            const workbook = XLSX.read(buffer, {
+                type: "array",
+                cellDates: true
+            });
 
-            state.data.watch = parse(w);
-            state.data.tours = parse(t);
-            state.data.schedule = parse(s);
-            state.data.vacation = parse(v);
-            state.data.holidays = parse(h);
-            state.data.visits = parse(vi);
+            const watch = readSheet(workbook, SHEET_ALIASES.watch);
+            const tours = readSheet(workbook, SHEET_ALIASES.tours);
+            const schedule = readSheet(workbook, SHEET_ALIASES.schedule);
+            const vacation = readSheet(workbook, SHEET_ALIASES.vacation);
+            const holidays = readSheet(workbook, SHEET_ALIASES.holidays);
+            const visits = readSheet(workbook, SHEET_ALIASES.visits);
 
-            renderNowCard();
-            if (state.nowIntervalId) clearInterval(state.nowIntervalId);
-            state.nowIntervalId = setInterval(renderNowCard, 1000);
+            const missing = [];
+            if (!watch) missing.push("Вахта");
+            if (!tours) missing.push("Экскурсии");
+            if (!schedule) missing.push("Расписание");
+            if (!vacation) missing.push("Отпуска");
+            if (!holidays) missing.push("Праздники");
+            if (!visits) missing.push("Визиты");
 
+            if (missing.length) {
+                showLoadError(`Не найдены листы: ${missing.join(", ")}`);
+                return;
+            }
+
+            state.data.watch = watch;
+            state.data.tours = tours;
+            state.data.schedule = schedule;
+            state.data.vacation = vacation;
+            state.data.holidays = holidays;
+            state.data.visits = visits;
+
+            state.hasWorkbook = true;
+            state.workbookName = file.name;
+            state.selectedDate = "";
+            state.calendarYear = new Date().getFullYear();
+            state.calendarMonth = new Date().getMonth();
+
+            updateFileChip();
             render();
         } catch (e) {
-            document.getElementById("content").innerHTML = `
-          <div class="panel card">
-            <div class="error-box">Не удалось загрузить данные. Проверь ссылки CSV.</div>
-          </div>
-        `;
-            console.error("Ошибка загрузки CSV:", e);
+            console.error("Ошибка чтения Excel:", e);
+            showLoadError("Не удалось прочитать Excel-файл. Проверь формат .xlsx и названия листов.");
         }
     }
 
-    document.getElementById("pass").addEventListener("keydown", function (e) {
+    document.getElementById("pass").addEventListener("keydown", function(e) {
         if (e.key === "Enter") login();
     });
+
+    document.getElementById("xlsxFile").addEventListener("change", function(e) {
+        const file = e.target.files && e.target.files[0];
+        handleWorkbookFile(file);
+    });
+
+    renderNowCard();
+    renderCalendar();
+    renderSelectedDateInfo();
+    renderTodaySummary();
+    updateFileChip();
 </script>
 </body>
 </html>
